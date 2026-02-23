@@ -5,6 +5,7 @@ import com.aviator.jwt_security.dto.ArticleRequestDTO;
 import com.aviator.jwt_security.dto.ArticleResponseDTO;
 import com.aviator.jwt_security.model.Article;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class ArticleMapper {
@@ -21,7 +22,9 @@ public class ArticleMapper {
                 .bannerUrl(article.getBannerUrl())
                 .youtubeLink(article.getYoutubeLink())
                 .pdfUrl(article.getPdfUrl())
-
+                .publishedAt(article.getPublishedAt())
+                .createdAt(article.getCreatedAt())
+                .updatedAt(article.getUpdatedAt())
                 .build();
     }
 

@@ -5,6 +5,7 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/jwt-security/pom.xml" />
+        <option value="$PROJECT_DIR$/content-servive/pom.xml" />
       </list>
     </option>
   </component>

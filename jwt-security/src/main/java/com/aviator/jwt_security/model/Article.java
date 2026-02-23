@@ -58,16 +58,16 @@ public class Article {
     public String pdfUrl;
 
     @Column(name = "published_at")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
     public LocalDateTime publishedAt;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
     public LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss")
     public LocalDateTime updatedAt;
 }

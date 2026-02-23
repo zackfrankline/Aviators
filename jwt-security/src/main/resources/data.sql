@@ -3,6 +3,7 @@
 -- --------------------------------------------------------------------------------------
 DROP TABLE IF EXISTS articles;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS categories;
 
 -- --------------------------------------------------------------------------------------
 -- CREATE TABLES
@@ -15,6 +16,14 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50)
+);
+
+CREATE TABLE categories (
+    id UUID PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    slug VARCHAR(120) UNIQUE NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE articles (
@@ -48,6 +57,17 @@ DELETE FROM users;
 INSERT INTO users (id, name, user_name, email, password_hash, role) VALUES
 ('11111111-1111-1111-1111-111111111111', 'Admin User', 'admin_master', 'admin@example.com', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HCGKKPTOsMy746A/rA.p.', 'ROLE_ADMIN'),
 ('22222222-2222-2222-2222-222222222222', 'Audience User', 'reader_01', 'audience@example.com', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HCGKKPTOsMy746A/rA.p.', 'ROLE_AUDIENCE');
+
+-- --------------------------------------------------------------------------------------
+-- CATEGORIES TABLE
+-- Note: We omit the 'id' and 'created_at' columns so Postgres handles them automatically.
+-- --------------------------------------------------------------------------------------
+INSERT INTO categories (id, name, slug, description) VALUES
+('33333333-3333-3333-3333-333333333333','Educational', 'educational', 'Educational resources, guides, and tutorials.'),
+('33333333-3333-3333-3333-333333333334','Research', 'research', 'In-depth academic and industry research papers.'),
+('33333333-3333-3333-3333-333333333335','Science', 'science', 'Scientific discoveries, theories, and explorations.'),
+('33333333-3333-3333-3333-333333333336','Exhibition', 'exhibition', 'Showcases, events, and gallery exhibitions.'),
+('33333333-3333-3333-3333-333333333337','Insights', 'insights', 'Industry insights, analytics, and expert opinions.');
 
 -- --------------------------------------------------------------------------------------
 -- 2. ARTICLES TABLE
@@ -90,7 +110,7 @@ INSERT INTO articles (id, title, slug, summary, content, status, category_id, au
     'Storing unstructured data in a relational database.',
     'Tutorial on querying and indexing JSONB columns efficiently...',
     'Published',
-    '33333333-3333-3333-3333-333333333333',
+    '33333333-3333-3333-3333-333333333334',
     '11111111-1111-1111-1111-111111111111',
     NULL,
     'http://youtube.com/watch?v=pg456',
@@ -104,7 +124,7 @@ INSERT INTO articles (id, title, slug, summary, content, status, category_id, au
     'Exploring the new compiler features.',
     'Content regarding hooks, performance, and server components...',
     'Published',
-    '33333333-3333-3333-3333-333333333333',
+    '33333333-3333-3333-3333-333333333334',
     '11111111-1111-1111-1111-111111111111',
     'http://example.com/banners/react19.jpg',
     NULL,
@@ -118,7 +138,7 @@ INSERT INTO articles (id, title, slug, summary, content, status, category_id, au
     'Running full-stack apps locally.',
     'How to link Postgres, Redis, and Spring Boot containers together...',
     'Working',
-    '33333333-3333-3333-3333-333333333333',
+    '33333333-3333-3333-3333-333333333335',
     '11111111-1111-1111-1111-111111111111',
     'http://example.com/banners/docker.jpg',
     NULL,
@@ -132,7 +152,7 @@ INSERT INTO articles (id, title, slug, summary, content, status, category_id, au
     'Updated FAA regulations for the new year.',
     'Draft covering the new compliance laws, maintenance schedules, and crew training...',
     'Working',
-    '33333333-3333-3333-3333-333333333333',
+    '33333333-3333-3333-3333-333333333335',
     '11111111-1111-1111-1111-111111111111',
     NULL,
     NULL,
@@ -146,7 +166,7 @@ INSERT INTO articles (id, title, slug, summary, content, status, category_id, au
     'Choosing the right API architecture.',
     'Detailed comparison of over-fetching, caching, and strongly typed schemas...',
     'Working',
-    '33333333-3333-3333-3333-333333333333',
+    '33333333-3333-3333-3333-333333333336',
     '11111111-1111-1111-1111-111111111111',
     'http://example.com/banners/api-design.jpg',
     'http://youtube.com/watch?v=api789',
@@ -160,7 +180,7 @@ INSERT INTO articles (id, title, slug, summary, content, status, category_id, au
     'Breaking down the chemistry and cost of SAF.',
     'Outline for an upcoming investigative piece on carbon-neutral flights...',
     'Open',
-    '33333333-3333-3333-3333-333333333333',
+    '33333333-3333-3333-3333-333333333336',
     '11111111-1111-1111-1111-111111111111',
     NULL,
     NULL,
@@ -174,7 +194,7 @@ INSERT INTO articles (id, title, slug, summary, content, status, category_id, au
     'New syntax and performance updates.',
     'Notes for an upcoming blog post regarding pattern matching and virtual threads...',
     'Open',
-    '33333333-3333-3333-3333-333333333333',
+    '33333333-3333-3333-3333-333333333337',
     '11111111-1111-1111-1111-111111111111',
     'http://example.com/banners/java26.jpg',
     NULL,
@@ -188,7 +208,7 @@ INSERT INTO articles (id, title, slug, summary, content, status, category_id, au
     'Deploying Spring Boot to a K8s cluster.',
     'Initial draft covering pods, services, deployments, and ingress controllers...',
     'Open',
-    '33333333-3333-3333-3333-333333333333',
+    '33333333-3333-3333-3333-333333333337',
     '11111111-1111-1111-1111-111111111111',
     NULL,
     NULL,
