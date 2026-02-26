@@ -23,6 +23,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -113,7 +116,15 @@ public class AuthServiceImpl implements AuthService {
         System.out.println("authenticated");
         // authentication succeeded. generate Token
         var user = userRepository.findByUserName(authRequest.getUserName()).orElseThrow(() -> new UsernameNotFoundException("User not Found"));
-        var jwtToken = jwtService.generateToken(new UserPrincipal(user));
+
+        // 3. ADD CUSTOM CLAIMS for other service to use
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("userId", user.getId());              // Inject the DB ID
+        extraClaims.put("role", user.getRole().name());       // Inject the Role String
+
+        // 4. Generate token with claims
+        var jwtToken = jwtService.generateToken(extraClaims, new UserPrincipal(user));
+
         return AuthResponse.builder()
                 .token(jwtToken)
                 .build();
