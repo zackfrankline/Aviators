@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ArticleRepository extends JpaRepository<Article, UUID> {
-    boolean existsByTitleIgnoreCaseOrSlug(String title, String slug);
 
     @Override
     List<Article> findAll();
@@ -19,5 +18,10 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query("UPDATE Article a SET a.categoryId = NULL WHERE a.categoryId = :categoryId")
-    int updateCategoryFieldToNull(@Param("categoryId") String categoryId);
+    void updateCategoryFieldToNull(@Param("categoryId") String categoryId);
+
+    boolean existsBySlugAndIdNot(String slug, UUID Id);
+
+    List<Article> findByStatus(String status);
+
 }

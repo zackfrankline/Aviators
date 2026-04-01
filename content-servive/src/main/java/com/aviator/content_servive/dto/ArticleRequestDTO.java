@@ -1,7 +1,7 @@
 package com.aviator.content_servive.dto;
 
 
-import com.aviator.content_servive.dto.customValidation.UpdateReadArticles;
+import com.aviator.content_servive.dto.customValidation.UpdateArticleValidation;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -14,11 +14,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticleRequestDTO {
+    @NotNull(groups = UpdateArticleValidation.class, message = "Id cannot be null")
+    @NotBlank(groups = UpdateArticleValidation.class, message = "Id cannot be blank")
+    public String Id;
 
     @NotBlank(message = "Title is required")
     public String title;
 
-    @NotBlank(message = "slug is required")
     public String slug;
 
     public String summary;
@@ -32,16 +34,15 @@ public class ArticleRequestDTO {
     public String status;
 
     @NotNull(message = "Category Id cannot be null")
-    public UUID categoryId;
+    public String categoryId;
 
-    //can be null while creating article
-    @NotNull(groups = {UpdateReadArticles.class} , message = "Author ID cannot be Empty")
-    public UUID authorId;
-
+    //add validation
     public String bannerUrl;
 
+    //add validation for youtube links
     public String youtubeLink;
 
+    //add validation for pdfUrl
     public String pdfUrl;
 
 }

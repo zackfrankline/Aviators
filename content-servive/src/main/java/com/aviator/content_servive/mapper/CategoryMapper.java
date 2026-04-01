@@ -15,10 +15,10 @@ public class CategoryMapper {
                 .build();
     }
 
-    public static Category toModel(CategoryRequestDTO categoryRequestDTO){
+    public static Category toModel(CategoryRequestDTO categoryRequestDTO, String slug){
         return Category.builder()
                 .name(categoryRequestDTO.getName())
-                .slug(categoryRequestDTO.getSlug())
+                .slug(slug)
                 .description(categoryRequestDTO.getDescription())
                 .build();
     }

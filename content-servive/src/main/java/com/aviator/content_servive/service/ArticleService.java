@@ -9,4 +9,6 @@ import java.util.List;
 public interface ArticleService {
     public List<ArticleResponseDTO> getAllArticles();
     public ArticleResponseDTO createArticle(ArticleRequestDTO articleRequestDTO);
+    public ArticleResponseDTO updateArticle(ArticleRequestDTO articleRequestDTO);
+    public void deleteArticle(ArticleRequestDTO articleRequestDTO);
 }

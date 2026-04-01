@@ -23,8 +23,6 @@ public class Article {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public UUID id;
 
-    @NotNull
-    @NotBlank(message = "Title is required")
     @Column(unique = true, nullable = false)
     public String title;
 
@@ -38,10 +36,10 @@ public class Article {
     @Column(nullable = false, length = 12000)
     public String content;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     public String status;
 
-    @Column(name = "category_id", nullable = false)
+    @Column(name = "category_id", nullable = true)
     public UUID categoryId;
 
     @Column(name = "author_id", nullable = false)
