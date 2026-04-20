@@ -9,11 +9,6 @@ import java.util.UUID;
 
 @Component
 public class SecurityUtility {
-
-    private SecurityUtility(){
-        throw new UnsupportedOperationException("Security Utility Class");
-    }
-
     private Authentication getAuthentication(){
         return SecurityContextHolder.getContext().getAuthentication();
     }

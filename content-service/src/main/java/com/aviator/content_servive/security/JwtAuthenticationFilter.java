@@ -48,10 +48,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             // 1. Extract data directly from token payload
             // Note: Integer to Long conversion safety
-            UUID userId = jwtService.extractClaim(jwt, claims -> UUID.fromString(claims.get("userId", String.class)));
+            String userIdString = jwtService.extractClaim(jwt, claims -> claims.get("userId", String.class));
             String role = jwtService.extractClaim(jwt, claims -> claims.get("role", String.class));
 
-            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (userIdString != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+                UUID userId = UUID.fromString(userIdString);
                 // 2. Create the Authentication object using ONLY the token data
                 // The Principal is now just the Long ID!
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -66,6 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             // Token is invalid/expired. Let it pass as anonymous.
             // Spring Security will reject it at the controller level if required.
+            e.printStackTrace();
         }
 
         filterChain.doFilter(request, response);

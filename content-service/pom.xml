@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.aviator</groupId>
-	<artifactId>content-servive</artifactId>
+	<artifactId>content-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>content-servive</name>
 	<description>Content Microservice (Articles, Categories, Tags and Article_Tags)</description>

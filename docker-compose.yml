@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  jwt-service-db:
+      image: postgres:15-alpine
+      container_name: jwt-service-db
+      environment:
+        POSTGRES_USER: admin_user
+        POSTGRES_PASSWORD: password
+        POSTGRES_DB: auth_db
+      ports:
+         - "5432:5432"
+      networks:
+        - aviator-network
+
+  # 2. Auth Service
+  jwt-service:
+    build: ./jwt-security
+    container_name: jwt-service
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/jwt-service
+    environment:
+      - SERVER_PORT=4000
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://jwt-service-db:5432/auth_db
+      - SPRING_DATASOURCE_USERNAME=admin_user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_SQL_INIT_MODE=always
+      - APPLICATION_SECURITY_ADMIN_SECRET=MySuperSecretAdminPass123!
+      - APPLICATION_SECURITY_JWT_SECRET_KEY=bWX+4c/dG5eH6jK8mN0pQ9rS2tU4vW6xY8zA6hC3dE5=
+      - APPLICATION_SECURITY_JWT_EXPIRATION=86400000
+    depends_on:
+      - jwt-service-db
+    networks:
+      - aviator-network
+    develop:
+      watch:
+        - action: rebuild
+          path: ./jwt-security/pom.xml
+        - action: rebuild
+          path: ./jwt-security/src
+
+  # 3. Content Database
+  content-service-db:
+    image: postgres:15-alpine
+    container_name: content-service-db
+    environment:
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: content_db
+    ports:
+      - "5433:5432"
+    networks:
+      - aviator-network
+
+  # 4. content service
+  content-service:
+    build: ./content-service
+    container_name: content-service
+    ports:
+      - "4001:4001"
+    volumes:
+      - .:/content-service  # Map local project root to /app in container
+    environment:
+      - SERVER_PORT=4001
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://content-service-db:5432/content_db
+      - SPRING_DATASOURCE_USERNAME=admin_user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_SQL_INIT_MODE=always
+      - APPLICATION_SECURITY_JWT_SECRET_KEY=bWX+4c/dG5eH6jK8mN0pQ9rS2tU4vW6xY8zA6hC3dE5=
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true
+    depends_on:
+      - content-service-db
+    networks:
+      - aviator-network
+    develop:
+      watch:
+        - action: rebuild
+          path: ./content-service/pom.xml
+        - action: rebuild
+          path: ./content-service/src
+
+networks:
+  aviator-network:
+    driver: bridge
+
+
+

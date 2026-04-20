@@ -149,7 +149,13 @@ public class AuthServiceImpl implements AuthService {
                 .role(Role.ROLE_ADMIN)
                 .build();
         userRepository.save(user);
-        String jwtToken = jwtService.generateToken(new UserPrincipal(user));
+
+        //set extraClaims
+        Map<String,Object> extraClaims = new HashMap<>();
+        extraClaims.put("userId", user.getId());
+        extraClaims.put("role", user.getRole());
+
+        String jwtToken = jwtService.generateToken(extraClaims, new UserPrincipal(user));
         return AuthResponse.builder()
                 .token(jwtToken).build();
     }

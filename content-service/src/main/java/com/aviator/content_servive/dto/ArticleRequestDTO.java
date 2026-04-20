@@ -16,7 +16,7 @@ import java.util.UUID;
 public class ArticleRequestDTO {
     @NotNull(groups = UpdateArticleValidation.class, message = "Id cannot be null")
     @NotBlank(groups = UpdateArticleValidation.class, message = "Id cannot be blank")
-    public String Id;
+    public String id;
 
     @NotBlank(message = "Title is required")
     public String title;

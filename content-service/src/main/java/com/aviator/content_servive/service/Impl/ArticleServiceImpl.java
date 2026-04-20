@@ -35,7 +35,7 @@ public class ArticleServiceImpl implements ArticleService {
     public List<ArticleResponseDTO> getAllArticles() {
 
         List<Article> articles;
-        if(!securityUtility.isCurrentUserAdmin()){
+        if(securityUtility.isCurrentUserAdmin()){
             articles = articleRepository.findAll();
         }
         else{
