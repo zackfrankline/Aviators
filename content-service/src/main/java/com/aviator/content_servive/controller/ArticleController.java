@@ -5,6 +5,7 @@ import com.aviator.content_servive.dto.ArticleResponseDTO;
 import com.aviator.content_servive.dto.customValidation.UpdateArticleValidation;
 import com.aviator.content_servive.service.ArticleService;
 import jakarta.validation.groups.Default;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,8 @@ public class ArticleController {
         List<ArticleResponseDTO> articleResponseDTOList =  articleService.getAllArticles();
         return ResponseEntity.ok().body(articleResponseDTOList);
     }
+
+
 
     @PostMapping
     public ResponseEntity<ArticleResponseDTO> createArticle(@Validated({Default.class}) @RequestBody ArticleRequestDTO articleRequestDTO){

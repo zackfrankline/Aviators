@@ -83,6 +83,47 @@ services:
         - action: rebuild
           path: ./content-service/src
 
+  # 3. Content Database
+  subscription-service-db:
+    image: postgres:15-alpine
+    container_name: subscription-service-db
+    environment:
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: subscription_db
+    ports:
+      - "5434:5432"
+    networks:
+      - aviator-network
+
+  # 4. content service
+  subscription-service:
+    build: ./subscription-service
+    container_name: subscription-service
+    ports:
+      - "4002:4002"
+    volumes:
+      - .:/subscription-service  # Map local project root to /app in container
+    environment:
+      - SERVER_PORT=4002
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://content-service-db:5432/subscription_db
+      - SPRING_DATASOURCE_USERNAME=admin_user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_SQL_INIT_MODE=always
+      - APPLICATION_SECURITY_JWT_SECRET_KEY=bWX+4c/dG5eH6jK8mN0pQ9rS2tU4vW6xY8zA6hC3dE5=
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true
+    depends_on:
+      - subscription-service-db
+    networks:
+      - aviator-network
+    develop:
+      watch:
+        - action: rebuild
+          path: ./subscription-service/pom.xml
+        - action: rebuild
+          path: ./subscription-service/src
+
 networks:
   aviator-network:
     driver: bridge
