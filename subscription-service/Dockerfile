@@ -26,7 +26,7 @@ WORKDIR /app
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
-COPY --from=builder /app/target/subscription-security-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=builder /app/target/subscription-service-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 4002
 

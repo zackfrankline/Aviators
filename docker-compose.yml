@@ -106,7 +106,7 @@ services:
       - .:/subscription-service  # Map local project root to /app in container
     environment:
       - SERVER_PORT=4002
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://content-service-db:5432/subscription_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://subscription-service-db:5432/subscription_db
       - SPRING_DATASOURCE_USERNAME=admin_user
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
