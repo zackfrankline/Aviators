@@ -13,7 +13,17 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "subscriptions")
+@AllArgsConstructor
+@Table(name = "subscriptions", indexes = {
+        @Index(
+                name = "idx_subscription_user_id",
+                columnList = "userId"
+        ),
+        @Index(
+                name = "idx_subscription_Category_id",
+                columnList = "categoryId"
+        )
+})
 public class Subscription {
     @EmbeddedId
     private SubscriptionId subscriptionId;
