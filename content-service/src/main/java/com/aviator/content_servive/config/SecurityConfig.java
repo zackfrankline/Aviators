@@ -30,8 +30,16 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         // Anyone can read articles
                         .requestMatchers(HttpMethod.GET, "/api/articles").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
                         // Only admins can post
                         .requestMatchers(HttpMethod.POST, "/api/articles").hasAuthority(Role.ROLE_ADMIN.toString())
+                        .requestMatchers(HttpMethod.PUT, "/api/articles").hasAuthority(Role.ROLE_ADMIN.toString())
+                        .requestMatchers(HttpMethod.DELETE, "/api/articles").hasAuthority(Role.ROLE_ADMIN.toString())
+                        //categories
+                        .requestMatchers(HttpMethod.PUT, "/api/categories").hasAuthority(Role.ROLE_ADMIN.toString())
+                        .requestMatchers(HttpMethod.DELETE, "/api/categories").hasAuthority(Role.ROLE_ADMIN.toString())
+                        .requestMatchers(HttpMethod.POST, "/api/categories").hasAuthority(Role.ROLE_ADMIN.toString())
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

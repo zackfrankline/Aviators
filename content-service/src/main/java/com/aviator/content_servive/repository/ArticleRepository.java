@@ -18,7 +18,7 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query("UPDATE Article a SET a.categoryId = NULL WHERE a.categoryId = :categoryId")
-    void updateCategoryFieldToNull(@Param("categoryId") String categoryId);
+    void updateCategoryFieldToNull(@Param("categoryId") UUID categoryId);
 
     boolean existsBySlugAndIdNot(String slug, UUID Id);
 

@@ -10,7 +10,6 @@ import com.aviator.jwt_security.repository.UserRepository;
 import com.aviator.jwt_security.security.JwtService;
 import com.aviator.jwt_security.security.UserPrincipal;
 import com.aviator.jwt_security.service.AuthService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
 
         //get jwt Token Immediately (Auto-login after Register)
-//        var identifier in Java, introduced in Java 10, allows the compiler to automatically infer the type of  ]local variable based on its assigned value
+        //var identifier in Java, introduced in Java 10, allows the compiler to automatically infer the type of  ]local variable based on its assigned value
         var jwtToken = jwtService.generateToken(new UserPrincipal(user));
         return AuthResponse.builder()
                 .token(jwtToken)

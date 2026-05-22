@@ -29,6 +29,7 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CategoryRequestDTO categoryRequestDTO){
+        System.out.println(categoryRequestDTO.getName() + " "+ categoryRequestDTO.getDescription());
         CategoryResponseDTO categoryResponseDTO = categoryService.createCategory(categoryRequestDTO);
         return ResponseEntity.ok().body(categoryResponseDTO);
     }
@@ -39,8 +40,8 @@ public class CategoryController {
         return ResponseEntity.ok().body(categoryResponseDTO);
     }
 
-    @DeleteMapping
-    public ResponseEntity<String> deleteCategory(String Id){
+    @DeleteMapping("/{Id}")
+    public ResponseEntity<String> deleteCategory(@PathVariable String Id){
         categoryService.deleteCategory(Id);
         return ResponseEntity.ok().body("Category Deleted.");
     }

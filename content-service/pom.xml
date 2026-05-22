@@ -101,6 +101,13 @@
             <version>0.13.0</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- KAFKA-->
+        <!-- Source: https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
 <!--        Spring Data JPA test-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -9,9 +9,9 @@ import com.avaitor.subscription_service.model.SubscriptionId;
 import com.avaitor.subscription_service.repository.SubscriptionRepository;
 import com.avaitor.subscription_service.security.SecurityUtility;
 import com.avaitor.subscription_service.service.SubscriptionService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;

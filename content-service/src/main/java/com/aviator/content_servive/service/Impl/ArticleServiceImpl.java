@@ -10,9 +10,9 @@ import com.aviator.content_servive.repository.ArticleRepository;
 import com.aviator.content_servive.service.ArticleService;
 import com.aviator.content_servive.security.SecurityUtility;
 import com.aviator.content_servive.utility.SlugUtility;
-import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
