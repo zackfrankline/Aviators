@@ -25,9 +25,12 @@ public class SecurityConfig {
         http
                 .csrf( csrf -> csrf.disable())
                 .authorizeHttpRequests(authorization -> authorization
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/subscriptions/{userId}").hasAuthority(Role.ROLE_AUDIENCE.toString())
+//                        ./ 1. EXACT MATCHES FIRST (More specific)
+                        .requestMatchers(HttpMethod.GET, "/api/subscriptions/categories").hasAuthority(Role.ROLE_ADMIN.toString())
                         .requestMatchers(HttpMethod.GET, "/api/subscriptions").hasAuthority(Role.ROLE_ADMIN.toString())
+
+                        // 2. DYNAMIC MATCHES SECOND (Less specific)
+                        .requestMatchers(HttpMethod.GET, "/api/subscriptions/{userId}").hasAuthority(Role.ROLE_AUDIENCE.toString())
                         .requestMatchers(HttpMethod.POST, "/api/subscriptions/{categoryId}").hasAuthority(Role.ROLE_AUDIENCE.toString())
                         .requestMatchers(HttpMethod.DELETE,"/api/subscriptions/{categoryId}").hasAuthority(Role.ROLE_AUDIENCE.toString())
                         .anyRequest().authenticated()

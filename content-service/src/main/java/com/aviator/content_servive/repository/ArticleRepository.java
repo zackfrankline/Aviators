@@ -23,5 +23,4 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
     boolean existsBySlugAndIdNot(String slug, UUID Id);
 
     List<Article> findByStatus(String status);
-
 }

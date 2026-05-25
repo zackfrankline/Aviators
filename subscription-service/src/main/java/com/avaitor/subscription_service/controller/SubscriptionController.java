@@ -1,7 +1,11 @@
 package com.avaitor.subscription_service.controller;
 
 import com.avaitor.subscription_service.dto.CategoryIdResponseDTO;
+import com.avaitor.subscription_service.dto.CategoryMirrorDto;
 import com.avaitor.subscription_service.dto.SubscriptionCountResponseDTO;
+import com.avaitor.subscription_service.model.CategoryMirror;
+import com.avaitor.subscription_service.repository.CategoryMirrorRepository;
+import com.avaitor.subscription_service.service.CategoryMirrorService;
 import com.avaitor.subscription_service.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +19,7 @@ import java.util.List;
 public class SubscriptionController {
 
     private final SubscriptionService subscriptionService;
+    private final CategoryMirrorService categoryMirrorService;
 
     //get subscribed categories
     @GetMapping("/{userId}")
@@ -44,5 +49,12 @@ public class SubscriptionController {
     public ResponseEntity<String> unSubscribeCategory(@PathVariable String categoryId){
         String response = subscriptionService.unSubscribeCategory(categoryId);
         return ResponseEntity.ok().body(response);
+    }
+
+    //ONLY FOR ADMIN
+    @GetMapping("/categories")
+    public ResponseEntity<List<CategoryMirrorDto>> getAllCategoryMirrors(){
+        List<CategoryMirrorDto> categoryMirrorDtos = categoryMirrorService.getAllCategories();
+        return ResponseEntity.ok().body(categoryMirrorDtos);
     }
 }

@@ -132,6 +132,7 @@ services:
     container_name: kafka
     ports:
       - "9092:9092"
+      - "29092:29092" # Traffic hole punched for your local machine desktop apps (localhost:29092)
     environment:
       # Configure it to run as a single node wearing both Broker and Controller hats
       - KAFKA_NODE_ID=1
@@ -143,6 +144,7 @@ services:
       - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
       # Generate a random cluster ID required for KRaft mode to boot up
       - KAFKA_CLUSTER_ID=4L62xdwCQKW6u5ydgFeZgA
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
     networks:
         - aviator-network
 
