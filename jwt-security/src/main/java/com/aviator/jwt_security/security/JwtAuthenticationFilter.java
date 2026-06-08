@@ -42,6 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         final String jwt;
         final String userEmail;
 
+
         // 2. Fast Fail: If no header or doesn't start with "Bearer ", pass it on.
         // We do NOT return an error here. Why?
         // Because the user might be trying to access a public page (like /login or /register).
@@ -53,6 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
         //3. Extract the token (Remove "Bearer" prefix)
         jwt = authHeader.substring(7);
+
 
         //4. extract Username from JWT (Decodes the token)
         try{
@@ -90,8 +92,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 // this saves the user in the context for this specific Thread/request.
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
-
-
         }
 
         //9. continue the chain

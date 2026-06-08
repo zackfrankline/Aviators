@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Transactional
     //added this annotation for preventing any errors while transaction
-    public AuthResponse registerUser(RegisterRequest registerRequest) {
+    public AuthResponse registerAudienceUser(RegisterRequest registerRequest) {
         validateRegisterRequest(registerRequest.getEmail(), registerRequest.getUserName());
         User user = User
                 .builder()
@@ -58,75 +56,44 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         userRepository.save(user);
 
-        //get jwt Token Immediately (Auto-login after Register)
-        //var identifier in Java, introduced in Java 10, allows the compiler to automatically infer the type of  ]local variable based on its assigned value
-        var jwtToken = jwtService.generateToken(new UserPrincipal(user));
+        //set extraClaims
+        Map<String,Object> extraClaims = new HashMap<>();
+        extraClaims.put("userId", user.getId());
+        extraClaims.put("role", user.getRole());
+
+        UserDetails userDetails = new UserPrincipal(user);
+        var jwtToken = jwtService.generateToken(extraClaims, userDetails);
+        var refreshToken = jwtService.generateRefreshToken(userDetails);
+
         return AuthResponse.builder()
                 .token(jwtToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
-    public User getCurrentLoggedInUser() throws IllegalArgumentException{
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = null;
-        User currentUser = null;
-
-        if (authentication != null && authentication.isAuthenticated()) {
-            Object principal = authentication.getPrincipal();
-            if (principal instanceof UserDetails) {
-                username = ((UserDetails) principal).getUsername();
-                // Access other details like authorities, etc.
-                System.out.println("Current user: " + username);
-            }
-        }
-        if (username != null) {
-            currentUser = userRepository.findByUserName(username).orElseThrow(() -> {
-                        throw new IllegalArgumentException("Username for admin not found");
-                    }
-            );
-        }
-        return currentUser;
-    }
 
 
     public AuthResponse authenticateUser(AuthRequest authRequest) throws AuthenticationException {
-        // This validates the user/password against DB.
-        // If invalid, it throws an exception automatically.
-        System.out.println("Attempting login for user: " + authRequest.getUserName());
-        System.out.println("Password provided: " + authRequest.getPassword());
-
-        // 1. Fetch the user manually just for this test
-        User testUser = userRepository.findByUserName(authRequest.getUserName()).get();
-
-        // 2. Print the exact raw string you are sending
-        System.out.println("RAW PASSWORD FROM POSTMAN: [" + authRequest.getPassword() + "]");
-
-        // 3. Print the DB Hash
-        System.out.println("DB HASH: [" + testUser.getPasswordHash() + "]");
-
-        // 4. THE MOMENT OF TRUTH
-        boolean isMatch = passwordEncoder.matches(authRequest.getPassword(), testUser.getPasswordHash());
-        System.out.println("DOES BCRYPT MATCH? : " + isMatch);
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authRequest.getUserName(),
                         authRequest.getPassword()
                 )
         );
-        System.out.println("authenticated");
+
         // authentication succeeded. generate Token
         var user = userRepository.findByUserName(authRequest.getUserName()).orElseThrow(() -> new UsernameNotFoundException("User not Found"));
 
-        // 3. ADD CUSTOM CLAIMS for other service to use
         Map<String, Object> extraClaims = new HashMap<>();
         extraClaims.put("userId", user.getId());              // Inject the DB ID
         extraClaims.put("role", user.getRole().name());       // Inject the Role String
 
-        // 4. Generate token with claims
-        var jwtToken = jwtService.generateToken(extraClaims, new UserPrincipal(user));
-
+        UserDetails userDetails = new UserPrincipal(user);
+        var jwtToken = jwtService.generateToken(extraClaims,userDetails);
+        var refreshToken = jwtService.generateRefreshToken(userDetails);
         return AuthResponse.builder()
                 .token(jwtToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
@@ -155,9 +122,43 @@ public class AuthServiceImpl implements AuthService {
         extraClaims.put("userId", user.getId());
         extraClaims.put("role", user.getRole());
 
-        String jwtToken = jwtService.generateToken(extraClaims, new UserPrincipal(user));
+        UserDetails userDetails = new UserPrincipal(user);
+        String jwtToken = jwtService.generateToken(extraClaims,userDetails);
+        String refreshToken = jwtService.generateRefreshToken(userDetails);
         return AuthResponse.builder()
-                .token(jwtToken).build();
+                .token(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    @Override
+    public AuthResponse refreshToken(String oldRefreshToken) {
+
+        //extract the username from oldRefreshToken Claim
+        String userName = jwtService.extractUsername(oldRefreshToken);
+
+        //get the user record from DB
+        // if not found throw Exception
+        User user = userRepository.findByUserName(userName).orElseThrow(
+                () -> new UsernameNotFoundException("No User Found in the Database")
+        );
+
+        //create UserDetails of that user
+        UserDetails userDetails = new UserPrincipal(user);
+        //throw Exception if the token is valid and expired
+        if(jwtService.isTokenValid(oldRefreshToken,userDetails)){
+            throw new IllegalArgumentException("Refresh Token is invalid or Expired");
+        }
+        // generate new Access + refreshToken
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("userid" , user.getId());
+        extraClaims.put("role" , user.getRole());
+        String jwt = jwtService.generateToken(extraClaims, userDetails);
+        String refreshToken = jwtService.generateRefreshToken(userDetails);
+        return AuthResponse.builder()
+                .refreshToken(refreshToken)
+                .token(jwt)
+                .build();
     }
 
     private void validateRegisterRequest(String email, String username) {
