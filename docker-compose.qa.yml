@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   # Single Postgres instance handling all 3 databases
   postgres-qa:
