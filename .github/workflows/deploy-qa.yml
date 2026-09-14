@@ -1,11 +1,10 @@
 name: QA Deployment Pipeline
 
-# This missing 'on' block caused your error. It tells GitHub to run this on every push to development.
 on:
   push:
-    branches: [ "development" ]
+    branches: ["development"]
   pull_request:
-    branches: [ "development" ]
+    branches: ["development"]
 
 env:
   REGISTRY: ghcr.io
@@ -14,15 +13,34 @@ jobs:
   # ==========================================
   # STAGE 1: CI Unit Tests
   # ==========================================
-  steps:
+  continuous-integration:
+    runs-on: ubuntu-latest
+    
+    # This spins up the temporary Postgres DB on the GitHub Runner for your tests
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: admin_user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: auth_db 
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          java-version: "21"
+          distribution: "temurin"
 
       # Explicitly pass the localhost DB credentials and dummy JWT key to the test environment
       - name: Test JWT Security
