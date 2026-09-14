@@ -1,1 +1,5 @@
-application.properties.idea/
+
+docker-compose.yml
+.idea/
+.env
+.vscode/

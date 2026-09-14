@@ -1,17 +1,17 @@
-version: '3.8'
+version: "3.8"
 
 services:
   jwt-service-db:
-      image: postgres:15-alpine
-      container_name: jwt-service-db
-      environment:
-        POSTGRES_USER: admin_user
-        POSTGRES_PASSWORD: password
-        POSTGRES_DB: auth_db
-      ports:
-         - "5432:5432"
-      networks:
-        - aviator-network
+    image: postgres:15-alpine
+    container_name: jwt-service-db
+    environment:
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: auth_db
+    ports:
+      - "5432:5432"
+    networks:
+      - aviator-network
 
   # 2. Auth Service
   jwt-service:
@@ -62,7 +62,7 @@ services:
     ports:
       - "4001:4001"
     volumes:
-      - .:/content-service  # Map local project root to /app in container
+      - .:/content-service # Map local project root to /app in container
     environment:
       - SERVER_PORT=4001
       - SPRING_DATASOURCE_URL=jdbc:postgresql://content-service-db:5432/content_db
@@ -74,6 +74,7 @@ services:
       - SPRING_DEVTOOLS_RESTART_ENABLED=true
     depends_on:
       - content-service-db
+      - kafka
     networks:
       - aviator-network
     develop:
@@ -83,9 +84,118 @@ services:
         - action: rebuild
           path: ./content-service/src
 
+  # 3. Content Database
+  subscription-service-db:
+    image: postgres:15-alpine
+    container_name: subscription-service-db
+    environment:
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: subscription_db
+    ports:
+      - "5434:5432"
+    networks:
+      - aviator-network
+
+  # 4. content service
+  subscription-service:
+    build: ./subscription-service
+    container_name: subscription-service
+    ports:
+      - "4002:4002"
+    volumes:
+      - .:/subscription-service # Map local project root to /app in container
+    environment:
+      - SERVER_PORT=4002
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://subscription-service-db:5432/subscription_db
+      - SPRING_DATASOURCE_USERNAME=admin_user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_SQL_INIT_MODE=always
+      - APPLICATION_SECURITY_JWT_SECRET_KEY=bWX+4c/dG5eH6jK8mN0pQ9rS2tU4vW6xY8zA6hC3dE5=
+      - SPRING_DEVTOOLS_RESTART_ENABLED=true
+    depends_on:
+      - subscription-service-db
+      - kafka
+    networks:
+      - aviator-network
+    develop:
+      watch:
+        - action: rebuild
+          path: ./subscription-service/pom.xml
+        - action: rebuild
+          path: ./subscription-service/src
+
+  # 5. Kafka Broker
+  kafka:
+    image: apache/kafka-native:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "29092:29092" # Traffic hole punched for your local machine desktop apps (localhost:29092)
+    environment:
+      # Configure it to run as a single node wearing both Broker and Controller hats
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      # Generate a random cluster ID required for KRaft mode to boot up
+      - KAFKA_CLUSTER_ID=4L62xdwCQKW6u5ydgFeZgA
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    networks:
+      - aviator-network
+
+  # 6. API - GATEWAY
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/api-gateway
+    networks:
+      - aviator-network
+    depends_on:
+      - jwt-service
+      - content-service
+      - subscription-service
+    develop:
+      watch:
+        - action: rebuild
+          path: ./api-gateway/pom.xml
+        - action: rebuild
+          path: ./api-gateway/src
+
+  ui-frontend:
+    build:
+      context: ./UI/aviators-ui
+      target: builder
+    container_name: ui-frontend
+    ports:
+      - "3000:3000"
+    command: npm run dev -- --hostname 0.0.0.0
+    networks:
+      - aviator-network
+    depends_on:
+      - api-gateway
+    develop:
+      watch:
+        - action: sync
+          path: ./UI/aviators-ui
+          target: /app
+          ignore:
+            - node_modules/
+            - .next/
+            - package.json
+            - package-lock.json
+        - action: rebuild
+          path: ./UI/aviators-ui/package.json
+        - action: rebuild
+          path: ./UI/aviators-ui/package-lock.json
+
 networks:
   aviator-network:
     driver: bridge
-
-
-

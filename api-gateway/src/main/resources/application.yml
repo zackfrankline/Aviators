@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "http://localhost:3000"
+                allowedHeaders: "*"
+                allowedMethods: "*" # You can safely condense your list to a wildcard
+          routes:
+            # ROUTE 1: CONTENT SERVICE
+            - id: content-service
+              uri: http://content-service:4001
+              predicates:
+                - Path=/api/content/**
+
+            # ROUTE 2: JWT SERVICE
+            - id: auth-service
+              uri: http://jwt-service:4000
+              predicates:
+                - Path=/api/auth/**
+
+            # ROUTE 3: SUBSCRIPTION SERVICE
+            - id: subscription-service
+              uri: http://subscription-service:4002
+              predicates:
+                - Path=/api/subscriptions/** # Double-check this! Earlier you used /api/subscriptions/ (with an 's')
+
+
+

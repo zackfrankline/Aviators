@@ -44,11 +44,11 @@ public class SecurityConfig {
                     });
                 })
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "api/auth/logout").hasAuthority(Role.ROLE_ADMIN.toString())
+                        .requestMatchers(HttpMethod.POST, "api/auth/logout").hasAuthority(Role.ROLE_AUDIENCE.toString())
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/articles").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/articles").hasAuthority(Role.ROLE_ADMIN.toString())
                         .anyRequest()
                         .authenticated()
                 )
@@ -79,7 +79,6 @@ public class SecurityConfig {
     // The component that actually processes the login request
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
-        System.out.println("authentication manager instantiated");
         return config.getAuthenticationManager();
     }
 }

@@ -1,0 +1,185 @@
+name: QA Deployment Pipeline
+
+on:
+  push:
+    branches: ["development"]
+  pull_request:
+    branches: ["development"]
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  # ==========================================
+  # STAGE 1: CI Unit Tests
+  # ==========================================
+  continuous-integration:
+    runs-on: ubuntu-latest
+
+    # This spins up the temporary Postgres DB on the GitHub Runner for your tests
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: admin_user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: auth_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+      # NEW STEP: Create the extra databases for the other microservices
+      - name: Create Additional Test Databases
+        env:
+          PGPASSWORD: password
+        run: |
+          psql -h localhost -U admin_user -p 5432 -d auth_db -c "CREATE DATABASE content_db;"
+          psql -h localhost -U admin_user -p 5432 -d auth_db -c "CREATE DATABASE subscription_db;"
+
+      # Explicitly pass the localhost DB credentials and dummy JWT key to the test environment
+      - name: Test JWT Security
+        working-directory: ./jwt-security
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/auth_db
+          SPRING_DATASOURCE_USERNAME: admin_user
+          SPRING_DATASOURCE_PASSWORD: password
+          APPLICATION_SECURITY_JWT_SECRET_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+          APPLICATION_SECURITY_JWT_EXPIRATION: 86400000
+        run: chmod +x ./mvnw && ./mvnw clean test
+
+      - name: Test Content Service
+        working-directory: ./content-service
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/content_db
+          SPRING_DATASOURCE_USERNAME: admin_user
+          SPRING_DATASOURCE_PASSWORD: password
+          APPLICATION_SECURITY_JWT_SECRET_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+          APPLICATION_SECURITY_JWT_EXPIRATION: 86400000
+        run: chmod +x ./mvnw && ./mvnw clean test
+
+      - name: Test Subscription Service
+        working-directory: ./subscription-service
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/subscription_db
+          SPRING_DATASOURCE_USERNAME: admin_user
+          SPRING_DATASOURCE_PASSWORD: password
+          APPLICATION_SECURITY_JWT_SECRET_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+          APPLICATION_SECURITY_JWT_EXPIRATION: 86400000
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+        run: chmod +x ./mvnw && ./mvnw clean test
+
+      - name: Test API Gateway
+        working-directory: ./api-gateway
+        env:
+          APPLICATION_SECURITY_JWT_EXPIRATION: 86400000
+          APPLICATION_SECURITY_JWT_SECRET_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+
+        run: chmod +x ./mvnw && ./mvnw clean test
+
+  # ==========================================
+  # STAGE 2: Build & Push Images to GHCR
+  # ==========================================
+  build-and-push:
+    needs: continuous-integration
+    if: github.event_name == 'push' && github.ref == 'refs/heads/development'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set Image Repository Name
+        run: |
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_REPO=${{ env.REGISTRY }}/$REPO_LOWER" >> $GITHUB_ENV
+
+      - name: Build and Push Backend Images
+        run: |
+          docker build -t ${{ env.IMAGE_REPO }}/jwt-service:latest ./jwt-security
+          docker build -t ${{ env.IMAGE_REPO }}/content-service:latest ./content-service
+          docker build -t ${{ env.IMAGE_REPO }}/subscription-service:latest ./subscription-service
+          docker build -t ${{ env.IMAGE_REPO }}/api-gateway:latest ./api-gateway
+
+          docker push ${{ env.IMAGE_REPO }}/jwt-service:latest
+          docker push ${{ env.IMAGE_REPO }}/content-service:latest
+          docker push ${{ env.IMAGE_REPO }}/subscription-service:latest
+          docker push ${{ env.IMAGE_REPO }}/api-gateway:latest
+
+      - name: Build and Push Frontend Image
+        run: |
+          docker build -t ${{ env.IMAGE_REPO }}/ui-frontend:latest ./UI/aviators-ui
+          docker push ${{ env.IMAGE_REPO }}/ui-frontend:latest
+
+  # ==========================================
+  # STAGE 3: Deploy to AWS QA Server
+  # ==========================================
+  deploy-qa:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Note: This will fail until you have a real AWS server configured in your GitHub Secrets.
+      # The tests and builds will still succeed.
+      - name: Copy Compose & Scripts to Server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.QA_HOST }}
+          username: ${{ secrets.QA_USER }}
+          key: ${{ secrets.QA_SSH_KEY }}
+          source: "docker-compose.qa.yml,init-multiple-dbs.sh"
+          target: "/opt/aviator/qa"
+
+      - name: Execute Deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.QA_HOST }}
+          username: ${{ secrets.QA_USER }}
+          key: ${{ secrets.QA_SSH_KEY }}
+          script: |
+            cd /opt/aviator/qa
+            chmod +x init-multiple-dbs.sh
+
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+            cat <<EOF > .env
+            GITHUB_REPOSITORY=$REPO_LOWER
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            EOF
+
+            test -n "$REPO_LOWER" || { echo "GITHUB_REPOSITORY is empty" >&2; exit 1; }
+            test -n "${{ secrets.DB_USER }}" || { echo "DB_USER secret is missing" >&2; exit 1; }
+            test -n "${{ secrets.DB_PASSWORD }}" || { echo "DB_PASSWORD secret is missing" >&2; exit 1; }
+            test -n "${{ secrets.JWT_SECRET_KEY }}" || { echo "JWT_SECRET_KEY secret is missing" >&2; exit 1; }
+            docker compose -f docker-compose.qa.yml config --quiet
+            docker compose -f docker-compose.qa.yml pull
+            docker compose -f docker-compose.qa.yml up -d --remove-orphans
+            docker image prune -f
