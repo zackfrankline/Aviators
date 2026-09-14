@@ -51,6 +51,7 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: password
           APPLICATION_SECURITY_JWT_SECRET_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
           SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+          APPLICATION_SECURITY_JWT_EXPIRATION: 86400000
         run: chmod +x ./mvnw && ./mvnw clean test
 
       - name: Test Content Service
@@ -61,6 +62,7 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: password
           APPLICATION_SECURITY_JWT_SECRET_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
           SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+          APPLICATION_SECURITY_JWT_EXPIRATION: 86400000
         run: chmod +x ./mvnw && ./mvnw clean test
 
       - name: Test Subscription Service
@@ -70,12 +72,14 @@ jobs:
           SPRING_DATASOURCE_USERNAME: admin_user
           SPRING_DATASOURCE_PASSWORD: password
           APPLICATION_SECURITY_JWT_SECRET_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+          APPLICATION_SECURITY_JWT_EXPIRATION: 86400000
           SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
         run: chmod +x ./mvnw && ./mvnw clean test
 
       - name: Test API Gateway
         working-directory: ./api-gateway
         env:
+          APPLICATION_SECURITY_JWT_EXPIRATION: 86400000
           APPLICATION_SECURITY_JWT_SECRET_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
 
         run: chmod +x ./mvnw && ./mvnw clean test
