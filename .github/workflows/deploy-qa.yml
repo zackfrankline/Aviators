@@ -50,6 +50,7 @@ jobs:
           SPRING_DATASOURCE_USERNAME: admin_user
           SPRING_DATASOURCE_PASSWORD: password
           APPLICATION_SECURITY_JWT_SECRET_KEY: dummy-secret-key-that-is-at-least-32-chars-long
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
         run: chmod +x ./mvnw && ./mvnw clean test
 
       - name: Test Content Service
@@ -59,6 +60,7 @@ jobs:
           SPRING_DATASOURCE_USERNAME: admin_user
           SPRING_DATASOURCE_PASSWORD: password
           APPLICATION_SECURITY_JWT_SECRET_KEY: dummy-secret-key-that-is-at-least-32-chars-long
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
         run: chmod +x ./mvnw && ./mvnw clean test
 
       - name: Test Subscription Service
@@ -68,12 +70,14 @@ jobs:
           SPRING_DATASOURCE_USERNAME: admin_user
           SPRING_DATASOURCE_PASSWORD: password
           APPLICATION_SECURITY_JWT_SECRET_KEY: dummy-secret-key-that-is-at-least-32-chars-long
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
         run: chmod +x ./mvnw && ./mvnw clean test
 
       - name: Test API Gateway
         working-directory: ./api-gateway
         env:
           APPLICATION_SECURITY_JWT_SECRET_KEY: dummy-secret-key-that-is-at-least-32-chars-long
+          
         run: chmod +x ./mvnw && ./mvnw clean test
 
   # ==========================================
