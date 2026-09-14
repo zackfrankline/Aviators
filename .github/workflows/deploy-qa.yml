@@ -14,26 +14,7 @@ jobs:
   # ==========================================
   # STAGE 1: CI Unit Tests
   # ==========================================
-  continuous-integration:
-    runs-on: ubuntu-latest
-    
-    # Spin up a temporary Postgres DB on the GitHub Runner for your tests
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_USER: admin_user
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: auth_db 
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
+  steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -43,20 +24,38 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      # Explicitly pass the localhost DB credentials and dummy JWT key to the test environment
       - name: Test JWT Security
         working-directory: ./jwt-security
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/auth_db
+          SPRING_DATASOURCE_USERNAME: admin_user
+          SPRING_DATASOURCE_PASSWORD: password
+          APPLICATION_SECURITY_JWT_SECRET_KEY: dummy-secret-key-that-is-at-least-32-chars-long
         run: chmod +x ./mvnw && ./mvnw clean test
 
       - name: Test Content Service
         working-directory: ./content-service
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/auth_db
+          SPRING_DATASOURCE_USERNAME: admin_user
+          SPRING_DATASOURCE_PASSWORD: password
+          APPLICATION_SECURITY_JWT_SECRET_KEY: dummy-secret-key-that-is-at-least-32-chars-long
         run: chmod +x ./mvnw && ./mvnw clean test
 
       - name: Test Subscription Service
         working-directory: ./subscription-service
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/auth_db
+          SPRING_DATASOURCE_USERNAME: admin_user
+          SPRING_DATASOURCE_PASSWORD: password
+          APPLICATION_SECURITY_JWT_SECRET_KEY: dummy-secret-key-that-is-at-least-32-chars-long
         run: chmod +x ./mvnw && ./mvnw clean test
 
       - name: Test API Gateway
         working-directory: ./api-gateway
+        env:
+          APPLICATION_SECURITY_JWT_SECRET_KEY: dummy-secret-key-that-is-at-least-32-chars-long
         run: chmod +x ./mvnw && ./mvnw clean test
 
   # ==========================================
