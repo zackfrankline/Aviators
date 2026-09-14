@@ -113,7 +113,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set Image Repository Name
-        run: echo "IMAGE_REPO=${{ env.REGISTRY }}/${{ github.repository }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_ENV
+        run: |
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_REPO=${{ env.REGISTRY }}/$REPO_LOWER" >> $GITHUB_ENV
 
       - name: Build and Push Backend Images
         run: |
