@@ -173,6 +173,7 @@ jobs:
             DB_USER=${{ secrets.DB_USER }}
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            JWT_EXP=${{ secrets.JWT_EXP }}
             EOF
 
             test -n "$REPO_LOWER" || { echo "GITHUB_REPOSITORY is empty" >&2; exit 1; }
