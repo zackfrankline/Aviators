@@ -57,7 +57,7 @@ jobs:
       - name: Test Content Service
         working-directory: ./content-service
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/auth_db
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/content_db
           SPRING_DATASOURCE_USERNAME: admin_user
           SPRING_DATASOURCE_PASSWORD: password
           APPLICATION_SECURITY_JWT_SECRET_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
@@ -68,7 +68,7 @@ jobs:
       - name: Test Subscription Service
         working-directory: ./subscription-service
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/auth_db
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/subscription_db
           SPRING_DATASOURCE_USERNAME: admin_user
           SPRING_DATASOURCE_PASSWORD: password
           APPLICATION_SECURITY_JWT_SECRET_KEY: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
