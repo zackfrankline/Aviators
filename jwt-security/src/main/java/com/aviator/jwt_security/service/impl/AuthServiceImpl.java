@@ -1,5 +1,6 @@
-package com.aviator.jwt_security.service.Impl;
+package com.aviator.jwt_security.service.impl;
 
+import com.aviator.jwt_security.config.Constants;
 import com.aviator.jwt_security.dto.AdminRegisterRequest;
 import com.aviator.jwt_security.dto.AuthRequest;
 import com.aviator.jwt_security.dto.AuthResponse;
@@ -58,20 +59,22 @@ public class AuthServiceImpl implements AuthService {
 
         //set extraClaims
         Map<String,Object> extraClaims = new HashMap<>();
-        extraClaims.put("userId", user.getId());
-        extraClaims.put("role", user.getRole());
+        extraClaims.put(Constants.JWT_CLAIM_USER_ID, user.getId());
+        extraClaims.put(Constants.JWT_CLAIM_ROLE, user.getRole());
 
         UserDetails userDetails = new UserPrincipal(user);
         var jwtToken = jwtService.generateToken(extraClaims, userDetails);
         var refreshToken = jwtService.generateRefreshToken(userDetails);
 
         return AuthResponse.builder()
+                .name(user.getName())
+                .userName(user.getUserName())
+                .email(user.getEmail())
+                .role(user.getRole().toString())
                 .token(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
     }
-
-
 
     public AuthResponse authenticateUser(AuthRequest authRequest) throws AuthenticationException {
         authenticationManager.authenticate(
@@ -92,6 +95,10 @@ public class AuthServiceImpl implements AuthService {
         var jwtToken = jwtService.generateToken(extraClaims,userDetails);
         var refreshToken = jwtService.generateRefreshToken(userDetails);
         return AuthResponse.builder()
+                .name(user.getName())
+                .userName(user.getUserName())
+                .email(user.getEmail())
+                .role(user.getRole().toString())
                 .token(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -112,20 +119,24 @@ public class AuthServiceImpl implements AuthService {
                 .name(adminRegisterRequest.getName())
                 .userName(adminRegisterRequest.getUserName())
                 .email(adminRegisterRequest.getEmail())
-                .passwordHash(adminRegisterRequest.getPasswordHash())
+                .passwordHash(passwordEncoder.encode(adminRegisterRequest.getPasswordHash()))
                 .role(Role.ROLE_ADMIN)
                 .build();
         userRepository.save(user);
 
         //set extraClaims
         Map<String,Object> extraClaims = new HashMap<>();
-        extraClaims.put("userId", user.getId());
-        extraClaims.put("role", user.getRole());
+        extraClaims.put(Constants.JWT_CLAIM_USER_ID, user.getId());
+        extraClaims.put(Constants.JWT_CLAIM_ROLE, user.getRole());
 
         UserDetails userDetails = new UserPrincipal(user);
         String jwtToken = jwtService.generateToken(extraClaims,userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
         return AuthResponse.builder()
+                .name(user.getName())
+                .userName(user.getUserName())
+                .email(user.getEmail())
+                .role(user.getRole().toString())
                 .token(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -156,6 +167,10 @@ public class AuthServiceImpl implements AuthService {
         String jwt = jwtService.generateToken(extraClaims, userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
         return AuthResponse.builder()
+                .name(user.getName())
+                .userName(user.getUserName())
+                .email(user.getEmail())
+                .role(user.getRole().toString())
                 .refreshToken(refreshToken)
                 .token(jwt)
                 .build();

@@ -1,4 +1,4 @@
-package com.aviator.content_servive.model;
+package com.aviator.content_service.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;

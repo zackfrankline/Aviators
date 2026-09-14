@@ -1,4 +1,4 @@
-package com.aviator.content_servive.dto;
+package com.aviator.content_service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

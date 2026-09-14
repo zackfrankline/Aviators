@@ -1,6 +1,6 @@
-package com.avaitor.subscription_service.repository;
+package com.aviator.subscription_service.repository;
 
-import com.avaitor.subscription_service.model.CategoryMirror;
+import com.aviator.subscription_service.model.CategoryMirror;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

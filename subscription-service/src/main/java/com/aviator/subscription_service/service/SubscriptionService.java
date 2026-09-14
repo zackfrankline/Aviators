@@ -1,8 +1,7 @@
-package com.avaitor.subscription_service.service;
+package com.aviator.subscription_service.service;
 
-import com.avaitor.subscription_service.dto.CategoryIdResponseDTO;
-import com.avaitor.subscription_service.dto.SubscriptionCountResponseDTO;
-import org.springframework.stereotype.Service;
+import com.aviator.subscription_service.dto.CategoryIdResponseDTO;
+import com.aviator.subscription_service.dto.SubscriptionCountResponseDTO;
 
 import java.util.List;
 

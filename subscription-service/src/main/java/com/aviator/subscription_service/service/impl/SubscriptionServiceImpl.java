@@ -1,14 +1,14 @@
-package com.avaitor.subscription_service.service.impl;
+package com.aviator.subscription_service.service.impl;
 
-import com.avaitor.subscription_service.dto.CategoryIdResponseDTO;
-import com.avaitor.subscription_service.dto.SubscriptionCountResponseDTO;
-import com.avaitor.subscription_service.exception.DuplicateSubscriptionRequestException;
-import com.avaitor.subscription_service.mapper.SubscriptionMapper;
-import com.avaitor.subscription_service.model.Subscription;
-import com.avaitor.subscription_service.model.SubscriptionId;
-import com.avaitor.subscription_service.repository.SubscriptionRepository;
-import com.avaitor.subscription_service.security.SecurityUtility;
-import com.avaitor.subscription_service.service.SubscriptionService;
+import com.aviator.subscription_service.dto.CategoryIdResponseDTO;
+import com.aviator.subscription_service.dto.SubscriptionCountResponseDTO;
+import com.aviator.subscription_service.exception.DuplicateSubscriptionRequestException;
+import com.aviator.subscription_service.mapper.SubscriptionMapper;
+import com.aviator.subscription_service.model.Subscription;
+import com.aviator.subscription_service.model.SubscriptionId;
+import com.aviator.subscription_service.repository.SubscriptionRepository;
+import com.aviator.subscription_service.security.SecurityUtility;
+import com.aviator.subscription_service.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,6 +1,6 @@
-package com.aviator.content_servive.exception;
+package com.aviator.content_service.exception;
 
-import org.apache.coyote.Response;
+import com.aviator.content_service.config.Constants;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,35 +14,35 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<Map<String,String>> handleSlugAlreadyExistsException(DuplicateResourceException ex){
         Map<String, String> errors = new HashMap<>();
-        errors.put("Error:", ex.getMessage());
+        errors.put(Constants.ERROR_HEADER, ex.getMessage());
         return ResponseEntity.badRequest().body(errors);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(DataIntegrityViolationException ex){
         Map<String, String> errors = new HashMap<>();
-        errors.put("Error:", ex.getMessage());
+        errors.put(Constants.ERROR_HEADER, ex.getMessage());
         return ResponseEntity.badRequest().body(errors);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleResourceNotFoundException(ResourceNotFoundException ex){
         Map<String, String> errors = new HashMap<>();
-        errors.put("Error:" , ex.getMessage());
+        errors.put(Constants.ERROR_HEADER , ex.getMessage());
         return ResponseEntity.badRequest().body(errors);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleResourceNotFoundException(IllegalArgumentException ex){
         Map<String, String> errors = new HashMap<>();
-        errors.put("Error:" , ex.getMessage());
+        errors.put(Constants.ERROR_HEADER , ex.getMessage());
         return ResponseEntity.badRequest().body(errors);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex){
         Map<String, String> errors = new HashMap<>();
-        errors.put("Error:" , ex.getMessage());
+        errors.put(Constants.ERROR_HEADER , ex.getMessage());
         return ResponseEntity.badRequest().body(errors);
     }
 }

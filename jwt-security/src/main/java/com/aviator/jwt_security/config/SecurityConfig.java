@@ -79,7 +79,6 @@ public class SecurityConfig {
     // The component that actually processes the login request
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
-        System.out.println("authentication manager instantiated");
         return config.getAuthenticationManager();
     }
 }

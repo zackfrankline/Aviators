@@ -1,11 +1,11 @@
-package com.avaitor.subscription_service.service.impl;
+package com.aviator.subscription_service.service.impl;
 
-import com.avaitor.subscription_service.dto.CategoryEvent;
-import com.avaitor.subscription_service.dto.CategoryMirrorDto;
-import com.avaitor.subscription_service.mapper.CategoryMirrorMapper;
-import com.avaitor.subscription_service.model.CategoryMirror;
-import com.avaitor.subscription_service.repository.CategoryMirrorRepository;
-import com.avaitor.subscription_service.service.CategoryMirrorService;
+import com.aviator.subscription_service.dto.CategoryEvent;
+import com.aviator.subscription_service.dto.CategoryMirrorDto;
+import com.aviator.subscription_service.mapper.CategoryMirrorMapper;
+import com.aviator.subscription_service.model.CategoryMirror;
+import com.aviator.subscription_service.repository.CategoryMirrorRepository;
+import com.aviator.subscription_service.service.CategoryMirrorService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

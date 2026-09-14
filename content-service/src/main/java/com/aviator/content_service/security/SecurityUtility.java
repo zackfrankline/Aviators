@@ -1,4 +1,4 @@
-package com.aviator.content_servive.security;
+package com.aviator.content_service.security;
 
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

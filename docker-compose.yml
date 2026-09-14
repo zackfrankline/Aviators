@@ -1,17 +1,17 @@
-version: '3.8'
+version: "3.8"
 
 services:
   jwt-service-db:
-      image: postgres:15-alpine
-      container_name: jwt-service-db
-      environment:
-        POSTGRES_USER: admin_user
-        POSTGRES_PASSWORD: password
-        POSTGRES_DB: auth_db
-      ports:
-         - "5432:5432"
-      networks:
-        - aviator-network
+    image: postgres:15-alpine
+    container_name: jwt-service-db
+    environment:
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: auth_db
+    ports:
+      - "5432:5432"
+    networks:
+      - aviator-network
 
   # 2. Auth Service
   jwt-service:
@@ -62,7 +62,7 @@ services:
     ports:
       - "4001:4001"
     volumes:
-      - .:/content-service  # Map local project root to /app in container
+      - .:/content-service # Map local project root to /app in container
     environment:
       - SERVER_PORT=4001
       - SPRING_DATASOURCE_URL=jdbc:postgresql://content-service-db:5432/content_db
@@ -104,7 +104,7 @@ services:
     ports:
       - "4002:4002"
     volumes:
-      - .:/subscription-service  # Map local project root to /app in container
+      - .:/subscription-service # Map local project root to /app in container
     environment:
       - SERVER_PORT=4002
       - SPRING_DATASOURCE_URL=jdbc:postgresql://subscription-service-db:5432/subscription_db
@@ -146,11 +146,56 @@ services:
       - KAFKA_CLUSTER_ID=4L62xdwCQKW6u5ydgFeZgA
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
     networks:
-        - aviator-network
+      - aviator-network
+
+  # 6. API - GATEWAY
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/api-gateway
+    networks:
+      - aviator-network
+    depends_on:
+      - jwt-service
+      - content-service
+      - subscription-service
+    develop:
+      watch:
+        - action: rebuild
+          path: ./api-gateway/pom.xml
+        - action: rebuild
+          path: ./api-gateway/src
+
+  ui-frontend:
+    build:
+      context: ./UI/aviators-ui
+      target: builder
+    container_name: ui-frontend
+    ports:
+      - "3000:3000"
+    command: npm run dev -- --hostname 0.0.0.0
+    networks:
+      - aviator-network
+    depends_on:
+      - api-gateway
+    develop:
+      watch:
+        - action: sync
+          path: ./UI/aviators-ui
+          target: /app
+          ignore:
+            - node_modules/
+            - .next/
+            - package.json
+            - package-lock.json
+        - action: rebuild
+          path: ./UI/aviators-ui/package.json
+        - action: rebuild
+          path: ./UI/aviators-ui/package-lock.json
 
 networks:
   aviator-network:
     driver: bridge
-
-
-

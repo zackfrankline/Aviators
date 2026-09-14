@@ -1,18 +1,18 @@
-package com.aviator.content_servive.service.impl;
+package com.aviator.content_service.service.impl;
 
-import com.aviator.content_servive.dto.CategoryEvent;
-import com.aviator.content_servive.dto.CategoryRequestDTO;
-import com.aviator.content_servive.dto.CategoryResponseDTO;
-import com.aviator.content_servive.exception.DuplicateResourceException;
-import com.aviator.content_servive.exception.ResourceNotFoundException;
-import com.aviator.content_servive.mapper.CategoryMapper;
-import com.aviator.content_servive.model.Category;
-import com.aviator.content_servive.repository.ArticleRepository;
-import com.aviator.content_servive.repository.CategoryRepository;
-import com.aviator.content_servive.service.CategoryService;
+import com.aviator.content_service.dto.CategoryEvent;
+import com.aviator.content_service.dto.CategoryRequestDTO;
+import com.aviator.content_service.dto.CategoryResponseDTO;
+import com.aviator.content_service.exception.DuplicateResourceException;
+import com.aviator.content_service.exception.ResourceNotFoundException;
+import com.aviator.content_service.mapper.CategoryMapper;
+import com.aviator.content_service.model.Category;
+import com.aviator.content_service.repository.ArticleRepository;
+import com.aviator.content_service.repository.CategoryRepository;
+import com.aviator.content_service.service.CategoryService;
 
-import com.aviator.content_servive.service.EventPublisher;
-import com.aviator.content_servive.utility.SlugUtility;
+import com.aviator.content_service.service.EventPublisher;
+import com.aviator.content_service.utility.SlugUtility;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,14 +48,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO) {
         String formattedSlug = SlugUtility.generateSlug(categoryRequestDTO.getName());
-        System.out.println("Formatted Slug" + formattedSlug);
         //validate
         validateCategorySlug(formattedSlug,null);
 
-        System.out.println("Formatted Slug validated" + formattedSlug);
-
         Category category = CategoryMapper.toModel(categoryRequestDTO, formattedSlug);
-        System.out.println("Category "+ category.getName() );
         try{
             categoryRepository.save(category);
             CategoryEvent categoryEvent = CategoryEvent.builder()
@@ -67,7 +63,6 @@ public class CategoryServiceImpl implements CategoryService {
             eventPublisher.sendEventMessage(categoryEvent);
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw new IllegalArgumentException(e.getMessage());
         }
         return CategoryMapper.toDTO(category);
@@ -116,8 +111,8 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional
-    public void deleteCategory(String Id){
-        UUID categoryId = UUID.fromString(Id);
+    public void deleteCategory(String id){
+        UUID categoryId = UUID.fromString(id);
         Category category = categoryRepository.findById(categoryId).orElseThrow(
                 () -> new ResourceNotFoundException("No Category found by Id")
         );
@@ -129,12 +124,11 @@ public class CategoryServiceImpl implements CategoryService {
                     .title(category.getName())
                     .eventType("DELETE")
                     .build();
-            categoryRepository.deleteById(UUID.fromString(Id));
+            categoryRepository.deleteById(UUID.fromString(id));
             eventPublisher.sendEventMessage(categoryEvent);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return;
     }
 
     private void validateCategorySlug(String slug, String categoryId){

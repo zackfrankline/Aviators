@@ -1,13 +1,11 @@
-package com.aviator.content_servive.dto;
+package com.aviator.content_service.dto;
 
 
-import com.aviator.content_servive.dto.customValidation.UpdateArticleValidation;
+import com.aviator.content_service.dto.validation.UpdateArticleValidation;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-
-import java.util.UUID;
 
 @Data
 @Builder

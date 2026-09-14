@@ -1,9 +1,9 @@
-package com.aviator.content_servive.controller;
+package com.aviator.content_service.controller;
 
 
-import com.aviator.content_servive.dto.CategoryRequestDTO;
-import com.aviator.content_servive.dto.CategoryResponseDTO;
-import com.aviator.content_servive.service.CategoryService;
+import com.aviator.content_service.dto.CategoryRequestDTO;
+import com.aviator.content_service.dto.CategoryResponseDTO;
+import com.aviator.content_service.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,6 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryResponseDTO> createCategory(@Valid @RequestBody CategoryRequestDTO categoryRequestDTO){
-        System.out.println(categoryRequestDTO.getName() + " "+ categoryRequestDTO.getDescription());
         CategoryResponseDTO categoryResponseDTO = categoryService.createCategory(categoryRequestDTO);
         return ResponseEntity.ok().body(categoryResponseDTO);
     }
@@ -40,9 +39,9 @@ public class CategoryController {
         return ResponseEntity.ok().body(categoryResponseDTO);
     }
 
-    @DeleteMapping("/{Id}")
-    public ResponseEntity<String> deleteCategory(@PathVariable String Id){
-        categoryService.deleteCategory(Id);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteCategory(@PathVariable String id){
+        categoryService.deleteCategory(id);
         return ResponseEntity.ok().body("Category Deleted.");
     }
 }

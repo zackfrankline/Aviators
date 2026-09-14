@@ -1,4 +1,4 @@
-package com.avaitor.subscription_service.security;
+package com.aviator.subscription_service.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

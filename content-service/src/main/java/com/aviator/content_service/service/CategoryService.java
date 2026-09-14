@@ -1,7 +1,7 @@
-package com.aviator.content_servive.service;
+package com.aviator.content_service.service;
 
-import com.aviator.content_servive.dto.CategoryRequestDTO;
-import com.aviator.content_servive.dto.CategoryResponseDTO;
+import com.aviator.content_service.dto.CategoryRequestDTO;
+import com.aviator.content_service.dto.CategoryResponseDTO;
 
 import java.util.List;
 

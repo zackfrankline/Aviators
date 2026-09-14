@@ -1,6 +1,6 @@
-package com.aviator.content_servive.config;
+package com.aviator.content_service.config;
 
-import com.aviator.content_servive.dto.CategoryEvent;
+import com.aviator.content_service.dto.CategoryEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;

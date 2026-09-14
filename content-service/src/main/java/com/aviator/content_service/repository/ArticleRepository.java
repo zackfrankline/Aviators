@@ -1,6 +1,6 @@
-package com.aviator.content_servive.repository;
+package com.aviator.content_service.repository;
 
-import com.aviator.content_servive.model.Article;
+import com.aviator.content_service.model.Article;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

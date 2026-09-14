@@ -1,6 +1,5 @@
 package com.aviator.jwt_security.security;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +24,6 @@ public class JwtService {
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
 
-
-
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
@@ -35,8 +33,8 @@ public class JwtService {
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setIssuedAt(Date.from(Instant.now()))
+                .setExpiration(Date.from(Instant.now().plusMillis(jwtExpiration)))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -46,8 +44,8 @@ public class JwtService {
         return Jwts.builder()
                 .setClaims(new HashMap<String,Object>())
                 .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000))) // refresh Token expiration
+                .setIssuedAt(Date.from(Instant.now()))
+                .setExpiration(Date.from(Instant.now().plusMillis((7 * 24 * 60 * 60 * 1000)))) // refresh Token expiration
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -71,7 +69,7 @@ public class JwtService {
     }
 
     private boolean isTokenExpired(String token){
-        return extractExpiration(token).before(new Date());
+        return extractExpiration(token).before(Date.from(Instant.now()));
     }
 
     private Date extractExpiration(String token){

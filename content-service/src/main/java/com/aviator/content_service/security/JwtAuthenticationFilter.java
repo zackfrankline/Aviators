@@ -1,4 +1,4 @@
-package com.aviator.content_servive.security;
+package com.aviator.content_service.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -68,7 +68,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             // Token is invalid/expired. Let it pass as anonymous.
             // Spring Security will reject it at the controller level if required.
-            e.printStackTrace();
         }
 
         filterChain.doFilter(request, response);

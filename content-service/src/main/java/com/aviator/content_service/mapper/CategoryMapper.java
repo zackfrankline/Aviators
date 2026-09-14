@@ -1,13 +1,18 @@
-package com.aviator.content_servive.mapper;
+package com.aviator.content_service.mapper;
 
-import com.aviator.content_servive.dto.CategoryRequestDTO;
-import com.aviator.content_servive.dto.CategoryResponseDTO;
-import com.aviator.content_servive.model.Category;
+import com.aviator.content_service.dto.CategoryRequestDTO;
+import com.aviator.content_service.dto.CategoryResponseDTO;
+import com.aviator.content_service.model.Category;
 
 public class CategoryMapper {
+
+    private CategoryMapper(){
+        // this Mapper class for Category cannot be instantiated
+    }
+
     public static CategoryResponseDTO toDTO(Category category){
         return CategoryResponseDTO.builder()
-                .Id(category.getId())
+                .id(category.getId())
                 .name(category.getName())
                 .slug(category.getSlug())
                 .description(category.getDescription())

@@ -1,6 +1,6 @@
-package com.aviator.content_servive.repository;
+package com.aviator.content_service.repository;
 
-import com.aviator.content_servive.model.Category;
+import com.aviator.content_service.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +18,7 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     @Override
     List<Category> findAll();
 
-    boolean existsBySlugAndIdNot(String slug, UUID Id);
+    boolean existsBySlugAndIdNot(String slug, UUID id);
 
     @Override
     void deleteById(UUID uuid);

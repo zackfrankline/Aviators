@@ -1,6 +1,6 @@
-package com.avaitor.subscription_service.config;
+package com.aviator.subscription_service.config;
 
-import com.avaitor.subscription_service.dto.CategoryEvent;
+import com.aviator.subscription_service.dto.CategoryEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,7 @@ public class KafkaConsumerConfig {
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JacksonJsonDeserializer.class);
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put("spring.json.trusted.packages", "*");
-        config.put("spring.json.value.default.type", "com.avaitor.subscription_service.dto.CategoryEvent");
+        config.put("spring.json.value.default.type", "com.aviator.subscription_service.dto.CategoryEvent");
 //        Force the deserializer to ignore the incoming __TypeId__ header!
         config.put("spring.json.use.type.headers", false);
         return new DefaultKafkaConsumerFactory<>(config);

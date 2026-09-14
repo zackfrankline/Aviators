@@ -1,4 +1,4 @@
-package com.avaitor.subscription_service.dto;
+package com.aviator.subscription_service.dto;
 
 import lombok.Builder;
 import lombok.Getter;

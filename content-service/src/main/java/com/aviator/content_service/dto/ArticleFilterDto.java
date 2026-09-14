@@ -1,4 +1,4 @@
-package com.aviator.content_servive.dto;
+package com.aviator.content_service.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

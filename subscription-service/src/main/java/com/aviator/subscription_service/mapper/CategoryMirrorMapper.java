@@ -1,7 +1,7 @@
-package com.avaitor.subscription_service.mapper;
+package com.aviator.subscription_service.mapper;
 
-import com.avaitor.subscription_service.dto.CategoryMirrorDto;
-import com.avaitor.subscription_service.model.CategoryMirror;
+import com.aviator.subscription_service.dto.CategoryMirrorDto;
+import com.aviator.subscription_service.model.CategoryMirror;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

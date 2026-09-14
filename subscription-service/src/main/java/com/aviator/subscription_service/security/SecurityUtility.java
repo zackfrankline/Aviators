@@ -1,6 +1,6 @@
-package com.avaitor.subscription_service.security;
+package com.aviator.subscription_service.security;
 
-import com.avaitor.subscription_service.model.Role;
+import com.aviator.subscription_service.model.Role;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

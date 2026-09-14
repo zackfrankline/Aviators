@@ -1,4 +1,4 @@
-package com.aviator.content_servive.dto;
+package com.aviator.content_service.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryRequestDTO {
-    public String Id;
+    public String id;
 
     @NotBlank(message = "Name is Required")
     @Pattern(regexp = "^[a-zA-Z0-9 ]+$", message = "Name must contain only letters and numbers")

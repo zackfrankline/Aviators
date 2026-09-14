@@ -1,4 +1,4 @@
-package com.aviator.content_servive.security;
+package com.aviator.content_service.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

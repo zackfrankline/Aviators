@@ -1,4 +1,4 @@
-package com.aviator.content_servive;
+package com.aviator.content_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,8 +1,8 @@
-package com.avaitor.subscription_service.service.impl;
+package com.aviator.subscription_service.service.impl;
 
-import com.avaitor.subscription_service.dto.CategoryEvent;
-import com.avaitor.subscription_service.service.CategoryMirrorService;
-import com.avaitor.subscription_service.service.EventConsumerService;
+import com.aviator.subscription_service.dto.CategoryEvent;
+import com.aviator.subscription_service.service.CategoryMirrorService;
+import com.aviator.subscription_service.service.EventConsumerService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
-package com.avaitor.subscription_service.service;
+package com.aviator.subscription_service.service;
 
-import com.avaitor.subscription_service.dto.CategoryEvent;
-import com.avaitor.subscription_service.dto.CategoryMirrorDto;
+import com.aviator.subscription_service.dto.CategoryEvent;
+import com.aviator.subscription_service.dto.CategoryMirrorDto;
 
 import java.util.List;
 

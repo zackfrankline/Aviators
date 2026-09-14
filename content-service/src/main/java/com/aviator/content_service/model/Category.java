@@ -1,4 +1,4 @@
-package com.aviator.content_servive.model;
+package com.aviator.content_service.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public UUID Id;
+    public UUID id;
 
     @Column(unique = true, nullable = false)
     public String name;

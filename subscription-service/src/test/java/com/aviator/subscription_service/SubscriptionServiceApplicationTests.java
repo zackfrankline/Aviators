@@ -1,4 +1,4 @@
-package com.avaitor.subscription_service;
+package com.aviator.subscription_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

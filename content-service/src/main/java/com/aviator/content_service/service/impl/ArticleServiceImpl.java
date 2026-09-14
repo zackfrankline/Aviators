@@ -1,16 +1,16 @@
-package com.aviator.content_servive.service.impl;
+package com.aviator.content_service.service.impl;
 
-import com.aviator.content_servive.dto.ArticleRequestDTO;
-import com.aviator.content_servive.dto.ArticleResponseDTO;
-import com.aviator.content_servive.exception.DuplicateResourceException;
-import com.aviator.content_servive.exception.ResourceNotFoundException;
-import com.aviator.content_servive.mapper.ArticleMapper;
-import com.aviator.content_servive.model.Article;
-import com.aviator.content_servive.repository.ArticleRepository;
-import com.aviator.content_servive.repository.CategoryRepository;
-import com.aviator.content_servive.service.ArticleService;
-import com.aviator.content_servive.security.SecurityUtility;
-import com.aviator.content_servive.utility.SlugUtility;
+import com.aviator.content_service.dto.ArticleRequestDTO;
+import com.aviator.content_service.dto.ArticleResponseDTO;
+import com.aviator.content_service.exception.DuplicateResourceException;
+import com.aviator.content_service.exception.ResourceNotFoundException;
+import com.aviator.content_service.mapper.ArticleMapper;
+import com.aviator.content_service.model.Article;
+import com.aviator.content_service.repository.ArticleRepository;
+import com.aviator.content_service.repository.CategoryRepository;
+import com.aviator.content_service.service.ArticleService;
+import com.aviator.content_service.security.SecurityUtility;
+import com.aviator.content_service.utility.SlugUtility;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

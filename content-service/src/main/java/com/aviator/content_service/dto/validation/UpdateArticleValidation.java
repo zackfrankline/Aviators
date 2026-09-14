@@ -1,4 +1,4 @@
-package com.aviator.content_service.dto.custom_validation;
+package com.aviator.content_service.dto.validation;
 
 public interface UpdateArticleValidation {
 }

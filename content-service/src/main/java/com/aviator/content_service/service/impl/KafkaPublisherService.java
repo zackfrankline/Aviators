@@ -1,7 +1,7 @@
-package com.aviator.content_servive.service.impl;
+package com.aviator.content_service.service.impl;
 
-import com.aviator.content_servive.dto.CategoryEvent;
-import com.aviator.content_servive.service.EventPublisher;
+import com.aviator.content_service.dto.CategoryEvent;
+import com.aviator.content_service.service.EventPublisher;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 

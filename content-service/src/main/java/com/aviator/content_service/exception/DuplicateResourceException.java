@@ -1,4 +1,4 @@
-package com.aviator.content_servive.exception;
+package com.aviator.content_service.exception;
 
 public class DuplicateResourceException extends RuntimeException {
     public DuplicateResourceException(String message) {

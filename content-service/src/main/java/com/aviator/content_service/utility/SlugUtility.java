@@ -1,6 +1,4 @@
-package com.aviator.content_servive.utility;
-
-import org.springframework.stereotype.Component;
+package com.aviator.content_service.utility;
 
 
 public class SlugUtility {

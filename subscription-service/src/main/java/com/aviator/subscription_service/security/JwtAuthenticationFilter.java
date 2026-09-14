@@ -1,4 +1,4 @@
-package com.avaitor.subscription_service.security;
+package com.aviator.subscription_service.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

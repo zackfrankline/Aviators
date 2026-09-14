@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthResponse {
     private String token;
+    private String name;
+    private String userName;
+    private String email;
+    private String role;
     @JsonIgnore
     private String refreshToken;
 }

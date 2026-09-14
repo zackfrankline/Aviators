@@ -1,4 +1,4 @@
-package com.aviator.content_servive.dto;
+package com.aviator.content_service.dto;
 
 
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryResponseDTO {
-    public UUID Id;
+    public UUID id;
     public String name;
     public String slug;
     public String description;

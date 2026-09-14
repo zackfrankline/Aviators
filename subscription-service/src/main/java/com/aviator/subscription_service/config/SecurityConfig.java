@@ -1,7 +1,7 @@
-package com.avaitor.subscription_service.config;
+package com.aviator.subscription_service.config;
 
-import com.avaitor.subscription_service.model.Role;
-import com.avaitor.subscription_service.security.JwtAuthenticationFilter;
+import com.aviator.subscription_service.model.Role;
+import com.aviator.subscription_service.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

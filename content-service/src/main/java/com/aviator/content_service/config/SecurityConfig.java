@@ -1,7 +1,7 @@
-package com.aviator.content_servive.config;
+package com.aviator.content_service.config;
 
-import com.aviator.content_servive.model.Role;
-import com.aviator.content_servive.security.JwtAuthenticationFilter;
+import com.aviator.content_service.model.Role;
+import com.aviator.content_service.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

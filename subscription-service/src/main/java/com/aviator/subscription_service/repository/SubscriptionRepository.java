@@ -1,10 +1,8 @@
-package com.avaitor.subscription_service.repository;
+package com.aviator.subscription_service.repository;
 
-import com.avaitor.subscription_service.model.Subscription;
-import com.avaitor.subscription_service.model.SubscriptionId;
+import com.aviator.subscription_service.model.Subscription;
+import com.aviator.subscription_service.model.SubscriptionId;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

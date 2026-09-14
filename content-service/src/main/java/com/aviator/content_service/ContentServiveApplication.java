@@ -1,4 +1,4 @@
-package com.aviator.content_servive;
+package com.aviator.content_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

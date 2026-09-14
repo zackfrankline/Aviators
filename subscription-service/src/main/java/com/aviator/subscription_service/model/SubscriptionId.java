@@ -1,4 +1,4 @@
-package com.avaitor.subscription_service.model;
+package com.aviator.subscription_service.model;
 
 import jakarta.persistence.Embeddable;
 import lombok.Builder;

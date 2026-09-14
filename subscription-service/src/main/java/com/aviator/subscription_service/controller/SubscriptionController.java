@@ -1,10 +1,10 @@
-package com.avaitor.subscription_service.controller;
+package com.aviator.subscription_service.controller;
 
-import com.avaitor.subscription_service.dto.CategoryIdResponseDTO;
-import com.avaitor.subscription_service.dto.CategoryMirrorDto;
-import com.avaitor.subscription_service.dto.SubscriptionCountResponseDTO;
-import com.avaitor.subscription_service.service.CategoryMirrorService;
-import com.avaitor.subscription_service.service.SubscriptionService;
+import com.aviator.subscription_service.dto.CategoryIdResponseDTO;
+import com.aviator.subscription_service.dto.CategoryMirrorDto;
+import com.aviator.subscription_service.dto.SubscriptionCountResponseDTO;
+import com.aviator.subscription_service.service.CategoryMirrorService;
+import com.aviator.subscription_service.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

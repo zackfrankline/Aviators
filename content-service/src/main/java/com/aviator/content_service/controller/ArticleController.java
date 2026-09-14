@@ -1,11 +1,10 @@
-package com.aviator.content_servive.controller;
+package com.aviator.content_service.controller;
 
-import com.aviator.content_servive.dto.ArticleRequestDTO;
-import com.aviator.content_servive.dto.ArticleResponseDTO;
-import com.aviator.content_servive.dto.customValidation.UpdateArticleValidation;
-import com.aviator.content_servive.service.ArticleService;
+import com.aviator.content_service.dto.ArticleRequestDTO;
+import com.aviator.content_service.dto.ArticleResponseDTO;
+import com.aviator.content_service.dto.validation.UpdateArticleValidation;
+import com.aviator.content_service.service.ArticleService;
 import jakarta.validation.groups.Default;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

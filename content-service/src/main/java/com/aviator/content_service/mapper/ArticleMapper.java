@@ -1,9 +1,9 @@
-package com.aviator.content_servive.mapper;
+package com.aviator.content_service.mapper;
 
 
-import com.aviator.content_servive.dto.ArticleRequestDTO;
-import com.aviator.content_servive.dto.ArticleResponseDTO;
-import com.aviator.content_servive.model.Article;
+import com.aviator.content_service.dto.ArticleRequestDTO;
+import com.aviator.content_service.dto.ArticleResponseDTO;
+import com.aviator.content_service.model.Article;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

@@ -1,7 +1,7 @@
-package com.avaitor.subscription_service.mapper;
+package com.aviator.subscription_service.mapper;
 
-import com.avaitor.subscription_service.dto.CategoryIdResponseDTO;
-import com.avaitor.subscription_service.model.Subscription;
+import com.aviator.subscription_service.dto.CategoryIdResponseDTO;
+import com.aviator.subscription_service.model.Subscription;
 
 public class SubscriptionMapper {
     public static CategoryIdResponseDTO toCategoryIdResponseDTO(Subscription subscription){
