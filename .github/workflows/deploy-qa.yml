@@ -41,6 +41,13 @@ jobs:
         with:
           java-version: "21"
           distribution: "temurin"
+      # NEW STEP: Create the extra databases for the other microservices
+      - name: Create Additional Test Databases
+        env:
+          PGPASSWORD: password
+        run: |
+          psql -h localhost -U admin_user -p 5432 -d auth_db -c "CREATE DATABASE content_db;"
+          psql -h localhost -U admin_user -p 5432 -d auth_db -c "CREATE DATABASE subscription_db;"
 
       # Explicitly pass the localhost DB credentials and dummy JWT key to the test environment
       - name: Test JWT Security
