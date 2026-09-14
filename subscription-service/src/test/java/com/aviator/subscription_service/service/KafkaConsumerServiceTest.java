@@ -1,8 +1,6 @@
 package com.aviator.subscription_service.service;
 
 import com.aviator.subscription_service.dto.CategoryEvent;
-import com.aviator.subscription_service.model.CategoryMirror;
-import com.aviator.subscription_service.repository.CategoryMirrorRepository;
 import com.aviator.subscription_service.service.impl.KafkaConsumerService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -21,9 +18,6 @@ import static org.mockito.Mockito.verify;
 class KafkaConsumerServiceTest {
     @Mock
     CategoryMirrorService categoryMirrorService;
-
-    @Mock
-    CategoryMirrorRepository categoryMirrorRepository;
 
     @InjectMocks
     KafkaConsumerService kafkaConsumerService;
@@ -40,7 +34,7 @@ class KafkaConsumerServiceTest {
         kafkaConsumerService.listen(categoryEvent);
 
 
-        verify(categoryMirrorRepository, times(1)).save(any(CategoryMirror.class));
+        verify(categoryMirrorService, times(1)).upsertCategory(categoryEvent);
     }
 
     @Test
@@ -54,6 +48,6 @@ class KafkaConsumerServiceTest {
                 .build();
         kafkaConsumerService.listen(categoryEvent);
 
-        verify(categoryMirrorRepository, times(1)).deleteById(any(UUID.class));
+        verify(categoryMirrorService, times(1)).deleteCategory(categoryEvent);
     }
 }
