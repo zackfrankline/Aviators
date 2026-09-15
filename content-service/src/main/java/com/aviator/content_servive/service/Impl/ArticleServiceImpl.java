@@ -1,5 +1,6 @@
 package com.aviator.content_servive.service.Impl;
 
+import com.aviator.content_servive.dto.ArticleFilterDto;
 import com.aviator.content_servive.dto.ArticleRequestDTO;
 import com.aviator.content_servive.dto.ArticleResponseDTO;
 import com.aviator.content_servive.exception.DuplicateResourceException;
@@ -12,6 +13,7 @@ import com.aviator.content_servive.security.SecurityUtility;
 import com.aviator.content_servive.utility.SlugUtility;
 import jakarta.transaction.Transactional;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -116,7 +118,28 @@ public class ArticleServiceImpl implements ArticleService {
         }
     }
 
-
+    @Override
+    public List<ArticleResponseDTO> searchArticle(ArticleFilterDto filter) {
+        Specification<Article> spec = Specification.where(((root, query, criteriaBuilder) -> criteriaBuilder.conjunction()));
+        if(filter.getSearch() != null && !filter.getSearch().isBlank()){
+            spec = spec.and(((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + filter.getSearch().toLowerCase() + "%")));
+        }
+        if(filter.getStatus() != null && !filter.getStatus().isBlank()){
+            spec = spec.and(((root, query, criteriaBuilder) -> criteriaBuilder.equal(criteriaBuilder.lower(root.get("status")),  filter.getStatus().toLowerCase())));
+        }
+        if(filter.getCategoryId() != null &&  !filter.getCategoryId().isBlank()){
+            spec = spec.and((root, query,criteriaBuilder) -> criteriaBuilder.equal(root.get("categoryId"), filter.getCategoryId()));
+        }
+        if( filter.getPublishedAfter() != null && !filter.getPublishedAfter().isBlank()){
+            spec = spec.and(((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("publishedAt"), filter.getPublishedAfter())));
+        }
+        if( filter.getPublishedBefore() != null && !filter.getPublishedBefore().isBlank()){
+            spec = spec.and(((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("publishedAt"), filter.getPublishedBefore())));
+        }
+        List<Article> articles = articleRepository.findAll(spec);
+        return articles.stream()
+                .map(ArticleMapper::toDTO).toList();
+    }
 
 
     private void validateArticleSlug(String slug, UUID id){

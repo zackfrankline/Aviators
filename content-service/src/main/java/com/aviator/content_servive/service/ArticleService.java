@@ -1,5 +1,6 @@
 package com.aviator.content_servive.service;
 
+import com.aviator.content_servive.dto.ArticleFilterDto;
 import com.aviator.content_servive.dto.ArticleRequestDTO;
 import com.aviator.content_servive.dto.ArticleResponseDTO;
 
@@ -11,4 +12,5 @@ public interface ArticleService {
     public ArticleResponseDTO createArticle(ArticleRequestDTO articleRequestDTO);
     public ArticleResponseDTO updateArticle(ArticleRequestDTO articleRequestDTO);
     public void deleteArticle(ArticleRequestDTO articleRequestDTO);
+    public List<ArticleResponseDTO> searchArticle(ArticleFilterDto filter);
 }

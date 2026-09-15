@@ -1,5 +1,6 @@
 package com.aviator.content_servive.controller;
 
+import com.aviator.content_servive.dto.ArticleFilterDto;
 import com.aviator.content_servive.dto.ArticleRequestDTO;
 import com.aviator.content_servive.dto.ArticleResponseDTO;
 import com.aviator.content_servive.dto.customValidation.UpdateArticleValidation;
@@ -46,6 +47,13 @@ public class ArticleController {
     public ResponseEntity<String> deleteArticle(@Validated({Default.class, UpdateArticleValidation.class}) @RequestBody ArticleRequestDTO articleRequestDTO){
         articleService.deleteArticle(articleRequestDTO);
         return ResponseEntity.ok().body("Article Deleted.");
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ArticleResponseDTO>> searchArticle(@ModelAttribute ArticleFilterDto filterDto){
+        System.out.println("Search term: " + filterDto.getSearch());
+        List<ArticleResponseDTO> articleList =  articleService.searchArticle(filterDto);
+        return ResponseEntity.ok().body(articleList);
     }
 
 }
