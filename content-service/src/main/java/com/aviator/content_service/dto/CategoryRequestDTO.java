@@ -20,6 +20,8 @@ public class CategoryRequestDTO {
 
     public String slug;
 
+    public String createdBy;
+
     @NotBlank(message = "Description is Required")
     @Pattern(regexp = "^[a-zA-Z0-9 ]+$", message = "Description must contain only letters and numbers")
     public String description;
