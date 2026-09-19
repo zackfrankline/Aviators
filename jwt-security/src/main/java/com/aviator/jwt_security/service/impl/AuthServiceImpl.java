@@ -158,7 +158,7 @@ public class AuthServiceImpl implements AuthService {
         UserDetails userDetails = new UserPrincipal(user);
         //throw Exception if the token is valid and expired
         if(jwtService.isTokenValid(oldRefreshToken,userDetails)){
-            throw new IllegalArgumentException("Refresh Token is invalid or Expired");
+            throw new IllegalArgumentException("Refresh Token is already Valid");
         }
         // generate new Access + refreshToken
         Map<String, Object> extraClaims = new HashMap<>();

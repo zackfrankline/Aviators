@@ -1,6 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk , PayloadAction } from "@reduxjs/toolkit";
 import { Article, Category } from "../definitions";
-import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 interface DataSlice {
@@ -19,8 +18,8 @@ const initialData: DataSlice = {
 
 export const fetchInitialData = createAsyncThunk('data/fetchInitial', async () => {
     const [articleResponse, categoriesResponse] = await Promise.all([
-        axios.get('http://localhost:8080/api/content/articles'),
-        axios.get('http://localhost:8080/api/content/categories')
+        axios.get('/content/articles'),
+        axios.get('/content/categories')
     ])
     console.log(articleResponse, categoriesResponse);
     return {
@@ -33,7 +32,15 @@ const dataSlice = createSlice({
     name:'data',
     initialState: initialData,
     reducers:{
-        
+        setPublishedArticles: (state, action: PayloadAction<Article[]>) => {
+            state.articles = action.payload;
+        },
+        setCategories: (state, action: PayloadAction<Category[]>) => {
+            state.categories = action.payload;
+        }
     }
 })  
+
+export const { setPublishedArticles, setCategories} = dataSlice.actions;
+export default dataSlice.reducer;
 

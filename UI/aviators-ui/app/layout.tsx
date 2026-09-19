@@ -1,7 +1,6 @@
 import Sidebar from "@/components/Sidebar";
 import "./globals.css";
 import TopBar from "@/components/TopBar";
-import { WorkspaceProvider } from "@/context/WorkspaceContext";
 import ClientProviders from "./lib/redux/Providers";
 
 export const metadata = {
