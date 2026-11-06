@@ -1,92 +1,197 @@
+// app/lib/redux/authSlice.ts
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User } from "../definitions";
-import { api } from "@/app/api/axiosIntance";
+import {
+  AuthError,
+  AuthResponse,
+  RegisterAdminRequest,
+  User,
+} from "../definitions";
+import { api } from "../../api/axiosIntance";
+import axios, { AxiosError } from "axios";
 
-
-interface AuthState{
-    user: Omit<User, 'passwordHash'> | null;
-    accessToken: string | null;
-    isAuthenticated: boolean;
-    status: 'idle'|'loading'|'succeeded'|'failed';
-    error: string|null;
+interface AuthState {
+  user: Omit<User, "passwordHash"> | null;
+  accessToken: string | null;
+  isAuthenticated: boolean;
+  isHydrating: boolean; // True during app boot while checking silent refresh
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
 }
 
 const initialState: AuthState = {
-    user: null,
-    accessToken: null,
-    isAuthenticated: false,
-    status: 'idle',
-    error: null,
-}
-
-interface AuthResponse {
-    token?: string | null;
-    name?: string;
-    userName?: string;
-    email?: string;
-    role: User['role'];
-}
-
-const normalizeAuthPayload = (payload: AuthResponse) => {
-    const user = {
-        name: payload?.name ?? '',
-        userName: payload?.userName ?? '',
-        email: payload?.email ?? '',
-        role: payload?.role,
-    };
-
-    return {
-        user,
-        accessToken: payload.token
-    };
+  user: null,
+  accessToken: null,
+  isAuthenticated: false,
+  isHydrating: true,
+  status: "idle",
+  error: null,
 };
 
-export const initialAuth = createAsyncThunk('auth/initialize', async () =>{
-    const userDummy = {
-        userName: 'super-admin',
-        password: 'something'
+// 1. Silent Refresh on App Mount (Replaces hardcoded initialAuth)
+export const refreshSession = createAsyncThunk(
+  "auth/refreshSession",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.post<AuthResponse>("/api/auth/refresh-token");
+      return response.data;
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const error = err as AxiosError<AuthError>;
+        if (error.response?.data) return rejectWithValue(error.response?.data);
+      }
+      return rejectWithValue({
+        error: "Login Error",
+        message: "Login failed. Please try again.",
+        status: "FAILED",
+        timestamp: Date.now().toString(),
+      });
     }
-    const response = await api.post('/auth/login', userDummy);
-    return normalizeAuthPayload(response.data);
-})
+  },
+);
 
-const authSlice = createSlice({
-    name: 'auth',
-    initialState,
-    reducers:{
-        setCredential: (state, action: PayloadAction<{user: Omit<User, 'passwordHash'>}>) => {
-            console.log('auth setCredentail',action);
-            state.user = action.payload.user;
-            state.isAuthenticated = true;
-            state.status = 'succeeded';
-        },
-        logoutSuccess: (state) => {
-            state.user = null;
-            state.isAuthenticated = false;
-            state.status = 'failed';
-        },
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(initialAuth.pending, (state) => {
-                state.status = 'loading';
-            })
-            .addCase(initialAuth.fulfilled, (state, action) => {
-                state.user = action.payload.user ?? null;
-                state.accessToken = action.payload.accessToken ?? null;
-                state.isAuthenticated = Boolean(action.payload.accessToken);
-                state.status = 'succeeded';
-                state.error = null;
-            })
-            .addCase(initialAuth.rejected, (state, action) => {
-                state.user = null;
-                state.accessToken = null;
-                state.isAuthenticated = false;
-                state.status = 'failed';
-                state.error = action.error.message || 'Session Expired';
-            })
+// 2. Explicit User Login
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async (
+    credentials: { userName: string; password: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await api.post<AuthResponse>(
+        "/api/auth/login",
+        credentials,
+      );
+      return response.data;
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const error = err as AxiosError<AuthError>;
+        if (error.response?.data) return rejectWithValue(error.response?.data);
+      }
+      return rejectWithValue({
+        error: "Login Error",
+        message: "Login failed. Please try again.",
+        status: "FAILED",
+        timestamp: Date.now().toString(),
+      });
     }
+  },
+);
+
+export const registerAdminUser = createAsyncThunk(
+  "/api/auth/register-admin",
+  async (credentials: RegisterAdminRequest, { rejectWithValue }) => {
+    try {
+      const response = await api.post<AuthResponse>(
+        "/api/auth/register-admin",
+        credentials,
+      );
+      return response.data;
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const error = err as AxiosError<AuthError>;
+        if (error.response?.data) return rejectWithValue(error.response?.data);
+      }
+      return rejectWithValue({
+        error: "Regsitration Error",
+        message: "Registration Failed",
+        status: "FAILED",
+        timestamp: Date.now().toString(),
+      });
+    }
+  },
+);
+
+// 3. User Logout
+export const logoutUser = createAsyncThunk("auth/logout", async () => {
+  await api.post("/api/auth/logout");
 });
 
-export const { setCredential, logoutSuccess } = authSlice.actions;
+const authSlice = createSlice({
+  name: "auth",
+  initialState,
+  reducers: {
+    setAccessToken: (state, action: PayloadAction<string>) => {
+      state.accessToken = action.payload;
+    },
+    logoutSuccess: (state) => {
+      state.user = null;
+      state.accessToken = null;
+      state.isAuthenticated = false;
+      state.isHydrating = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Refresh Session
+      .addCase(refreshSession.pending, (state) => {
+        state.isHydrating = true;
+      })
+      .addCase(refreshSession.fulfilled, (state, action) => {
+        state.user = {
+          name: action.payload.name,
+          userName: action.payload.userName,
+          email: action.payload.email,
+          role: action.payload.role,
+        };
+        state.accessToken = action.payload.token;
+        state.isAuthenticated = true;
+        state.isHydrating = false;
+      })
+      .addCase(refreshSession.rejected, (state) => {
+        state.user = null;
+        state.accessToken = null;
+        state.isAuthenticated = false;
+        state.isHydrating = false;
+      })
+
+      // Login
+      .addCase(loginUser.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.user = {
+          name: action.payload.name,
+          userName: action.payload.userName,
+          email: action.payload.email,
+          role: action.payload.role,
+        };
+        state.accessToken = action.payload.token;
+        state.isAuthenticated = true;
+        state.status = "succeeded";
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+      })
+      //RegisterAdminUser
+      .addCase(registerAdminUser.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(registerAdminUser.fulfilled, (state, action) => {
+        state.user = {
+          name: action.payload.name,
+          userName: action.payload.userName,
+          email: action.payload.email,
+          role: action.payload.role,
+        };
+        state.status = "succeeded";
+        state.accessToken = action.payload.token;
+        state.isAuthenticated = true;
+      })
+      .addCase(registerAdminUser.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+      })
+      // Logout
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.user = null;
+        state.accessToken = null;
+        state.isAuthenticated = false;
+      });
+  },
+});
+
+export const { setAccessToken, logoutSuccess } = authSlice.actions;
 export default authSlice.reducer;

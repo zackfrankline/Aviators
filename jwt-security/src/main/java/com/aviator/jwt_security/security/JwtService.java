@@ -30,22 +30,25 @@ public class JwtService {
 
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        Instant now = Instant.now();
         return Jwts.builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusMillis(jwtExpiration)))
+                .claims(extraClaims)
+                .subject(userDetails.getUsername())
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusMillis(jwtExpiration)))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     //Generate Refresh Token
     public String generateRefreshToken(UserDetails userDetails) {
+        //use Static date for all Jwt Fields
+        Instant now = Instant.now();
         return Jwts.builder()
-                .setClaims(new HashMap<String,Object>())
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusMillis((7 * 24 * 60 * 60 * 1000)))) // refresh Token expiration
+                .claims(new HashMap<String,Object>())
+                .subject(userDetails.getUsername())
+                .issuedAt(Date.from(Instant.now()))
+                .expiration(Date.from(now.plusMillis((7 * 24 * 60 * 60 * 1000)))) // refresh Token expiration
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

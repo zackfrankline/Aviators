@@ -1,46 +1,102 @@
-import { createSlice, createAsyncThunk , PayloadAction } from "@reduxjs/toolkit";
+// app/lib/redux/contentSlice.ts
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Article, Category } from "../definitions";
-import axios from "axios";
+import { api } from "../../api/axiosIntance";
+import { AxiosError } from "axios";
 
-interface DataSlice {
-    articles: Article[];
-    categories: Category[];
-    status: 'idle' | 'loading' | 'succeeded' | 'failed';
-    error: string | null;
+interface ContentState {
+  articles: Article[];
+  categories: Category[];
+  selectedCategoryId: string | null;
+  status: "idle" | "loading" | "succeeded" | "failed";
+  articlesLoading: boolean;
+  error: string | null;
 }
 
-const initialData: DataSlice = {
-    articles: [],
-    categories: [],
-    status: 'idle',
-    error: null
-}
+const initialState: ContentState = {
+  articles: [],
+  categories: [],
+  selectedCategoryId: null,
+  status: "idle",
+  articlesLoading: false,
+  error: null,
+};
 
-export const fetchInitialData = createAsyncThunk('data/fetchInitial', async () => {
-    const [articleResponse, categoriesResponse] = await Promise.all([
-        axios.get('/content/articles'),
-        axios.get('/content/categories')
-    ])
-    console.log(articleResponse, categoriesResponse);
-    return {
-        articles: articleResponse.data,
-        categories: categoriesResponse.data,
+// 1. Initial Page Load: Preload published articles & all categories
+export const fetchInitialData = createAsyncThunk(
+  "content/fetchInitialData",
+  async (_, { rejectWithValue }) => {
+    try {
+      const [articlesRes, categoriesRes] = await Promise.all([
+        api.get<Article[]>("/api/content/articles"),
+        api.get<Category[]>("/api/content/categories"),
+      ]);
+      return {
+        articles: articlesRes.data,
+        categories: categoriesRes.data,
+      };
+    } catch (err: unknown) {
+      return rejectWithValue((err as AxiosError).response?.data|| "Failed to load feed");
     }
-})
+  }
+);
 
-const dataSlice = createSlice({
-    name:'data',
-    initialState: initialData,
-    reducers:{
-        setPublishedArticles: (state, action: PayloadAction<Article[]>) => {
-            state.articles = action.payload;
-        },
-        setCategories: (state, action: PayloadAction<Category[]>) => {
-            state.categories = action.payload;
-        }
+// 2. Fetch articles by selected category
+export const fetchArticlesByCategory = createAsyncThunk(
+  "content/fetchArticlesByCategory",
+  async (categoryId: string | null, { rejectWithValue }) => {
+    try {
+      const url = categoryId
+        ? `/api/content/articles/public?categoryId=${categoryId}`
+        : "/api/content/articles/public";
+      const response = await api.get<Article[]>(url);
+      return { articles: response.data, categoryId };
+    } catch (err: unknown) {
+      return rejectWithValue((err as AxiosError).response?.data || "Failed to load category articles");
     }
-})  
+  }
+);
 
-export const { setPublishedArticles, setCategories} = dataSlice.actions;
-export default dataSlice.reducer;
+const contentSlice = createSlice({
+  name: "content",
+  initialState,
+  reducers: {
+    setSelectedCategory: (state, action: PayloadAction<string | null>) => {
+      state.selectedCategoryId = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Initial Load
+      .addCase(fetchInitialData.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchInitialData.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.articles = action.payload.articles;
+        state.categories = action.payload.categories;
+        state.error = null;
+      })
+      .addCase(fetchInitialData.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload as string;
+      })
 
+      // Fetch By Category
+      .addCase(fetchArticlesByCategory.pending, (state) => {
+        state.articlesLoading = true;
+      })
+      .addCase(fetchArticlesByCategory.fulfilled, (state, action) => {
+        state.articlesLoading = false;
+        state.articles = action.payload.articles;
+        state.selectedCategoryId = action.payload.categoryId;
+      })
+      .addCase(fetchArticlesByCategory.rejected, (state, action) => {
+        state.articlesLoading = false;
+        state.error = action.payload as string;
+      });
+  },
+});
+
+export const { setSelectedCategory } = contentSlice.actions;
+export default contentSlice.reducer;

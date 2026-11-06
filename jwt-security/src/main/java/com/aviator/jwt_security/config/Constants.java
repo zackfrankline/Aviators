@@ -7,4 +7,5 @@ public class Constants {
 
     public static final String JWT_CLAIM_USER_ID = "userId";
     public static final String JWT_CLAIM_ROLE = "role";
+    public static final String ERROR_HEADER = "Error";
 }

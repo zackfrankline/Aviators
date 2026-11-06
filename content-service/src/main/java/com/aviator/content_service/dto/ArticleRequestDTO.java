@@ -28,7 +28,7 @@ public class ArticleRequestDTO {
 
     // Matches exactly "open", "working", or "published"
     @NotBlank(message = "Status cannot be empty")
-    @Pattern(regexp = "^(Open|Working|Published)$", message = "Status must be 'Open', 'Working', or 'Published'")
+    @Pattern(regexp = "^(Open|Working|Published|Draft)$", message = "Status must be 'Open', 'Working', 'Draft' or 'Published'")
     public String status;
 
     @NotNull(message = "Category Id cannot be null")
