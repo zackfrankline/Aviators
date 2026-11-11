@@ -52,7 +52,7 @@ export function SignUpForm() {
     },
   });
 
-  console.log("React Hook Form Error:", errors);
+  // console.log("React Hook Form Error:", errors);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">

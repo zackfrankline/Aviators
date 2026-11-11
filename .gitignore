@@ -4,4 +4,3 @@ docker-compose.yml
 .env
 .vscode/
 qa-key.pem
-docker-compose.yml

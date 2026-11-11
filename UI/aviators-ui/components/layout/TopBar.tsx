@@ -16,7 +16,7 @@ export default function TopBar() {
   );
 
   const { openTab } = useWorkspace();
-  console.log("User", user, "isAuthenticated:", isAuthenticated);
+  // console.log("User", user, "isAuthenticated:", isAuthenticated);
 
   const handleCreateNew = () => {
     openTab({

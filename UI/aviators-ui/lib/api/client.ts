@@ -24,7 +24,7 @@ export const injectStore = (_store: AppStore) => {
 api.interceptors.request.use(
   (config) => {
     const token = store?.getState()?.auth?.accessToken;
-    console.log("Axios Interceptor Requests token:", token);
+    // console.log("Axios Interceptor Requests token:", token);
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }

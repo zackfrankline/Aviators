@@ -59,7 +59,7 @@ export default function Workspace() {
 
   const handleSave = (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log("Saving article data:", editorData);
+    // console.log("Saving article data:", editorData);
     // In a real app, you would make an API call to your Content Service here
   };
 
