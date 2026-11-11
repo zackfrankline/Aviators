@@ -1,13 +1,7 @@
 // app/lib/redux/authSlice.ts
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import {
-  AuthError,
-  AuthResponse,
-  RegisterAdminRequest,
-  User,
-} from "../definitions";
-import { api } from "../../api/axiosIntance";
 import axios, { AxiosError } from "axios";
+import { AdminRegisterRequestDTO, authApi, AuthError, LoginRequestDTO, User } from "@/features/auth";
 
 interface AuthState {
   user: Omit<User, "passwordHash"> | null;
@@ -27,24 +21,29 @@ const initialState: AuthState = {
   error: null,
 };
 
+function handleError(err: unknown, fallbackMessage: string) {
+  if (axios.isAxiosError(err)) {
+    const error = err as AxiosError<AuthError>;
+    if (error.response?.data) return error.response?.data;
+  }
+  return {
+    error: "Authentication Error",
+    message: fallbackMessage,
+    status: "FAILED",
+    timestamp: Date.now().toString(),
+  };
+}
+
 // 1. Silent Refresh on App Mount (Replaces hardcoded initialAuth)
 export const refreshSession = createAsyncThunk(
   "auth/refreshSession",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.post<AuthResponse>("/api/auth/refresh-token");
-      return response.data;
+      return await authApi.refreshSession();
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        const error = err as AxiosError<AuthError>;
-        if (error.response?.data) return rejectWithValue(error.response?.data);
-      }
-      return rejectWithValue({
-        error: "Login Error",
-        message: "Login failed. Please try again.",
-        status: "FAILED",
-        timestamp: Date.now().toString(),
-      });
+      return rejectWithValue(
+        handleError(err, "Login failed. Please try again."),
+      );
     }
   },
 );
@@ -52,58 +51,33 @@ export const refreshSession = createAsyncThunk(
 // 2. Explicit User Login
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (
-    credentials: { userName: string; password: string },
-    { rejectWithValue },
-  ) => {
+  async (credentials: LoginRequestDTO, { rejectWithValue }) => {
     try {
-      const response = await api.post<AuthResponse>(
-        "/api/auth/login",
-        credentials,
-      );
-      return response.data;
+      return await authApi.login(credentials);
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        const error = err as AxiosError<AuthError>;
-        if (error.response?.data) return rejectWithValue(error.response?.data);
-      }
-      return rejectWithValue({
-        error: "Login Error",
-        message: "Login failed. Please try again.",
-        status: "FAILED",
-        timestamp: Date.now().toString(),
-      });
+      return rejectWithValue(
+        handleError(err, "Login failed. Please try again."),
+      );
     }
   },
 );
 
 export const registerAdminUser = createAsyncThunk(
   "/api/auth/register-admin",
-  async (credentials: RegisterAdminRequest, { rejectWithValue }) => {
+  async (credentials: AdminRegisterRequestDTO, { rejectWithValue }) => {
     try {
-      const response = await api.post<AuthResponse>(
-        "/api/auth/register-admin",
-        credentials,
-      );
-      return response.data;
+      return await authApi.registerAdmin(credentials);
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        const error = err as AxiosError<AuthError>;
-        if (error.response?.data) return rejectWithValue(error.response?.data);
-      }
-      return rejectWithValue({
-        error: "Regsitration Error",
-        message: "Registration Failed",
-        status: "FAILED",
-        timestamp: Date.now().toString(),
-      });
+      return rejectWithValue(
+        handleError(err, "Registration failed. Please try again."),
+      );
     }
   },
 );
 
 // 3. User Logout
 export const logoutUser = createAsyncThunk("auth/logout", async () => {
-  await api.post("/api/auth/logout");
+  await authApi.logout();
 });
 
 const authSlice = createSlice({

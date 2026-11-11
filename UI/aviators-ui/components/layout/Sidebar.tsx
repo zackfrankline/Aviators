@@ -2,19 +2,15 @@
 import { ReactNode, useState } from "react";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { NavItem } from "./NavItem";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/app/lib/redux/store";
-import { fetchArticlesByCategory } from "@/app/lib/redux/contentSlice";
-import { Category } from "@/app/lib/definitions";
+import { Category, fetchArticlesByCategory } from "@/features/content";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 
 export default function Sidebar() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const { user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth,
-  );
-  const { categories, selectedCategoryId } = useSelector(
-    (state: RootState) => state.content,
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { categories, selectedCategoryId } = useAppSelector(
+    (state) => state.content,
   );
 
   let adminStatusCategory: ReactNode;
@@ -22,10 +18,16 @@ export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { openTab } = useWorkspace();
 
-  const handleOpenList = (title: string, type: string, value: string) => {
+  const handleOpenList = (
+    title: string,
+    type: string,
+    value: string,
+    subType: "ARTICLE" | "CATEGORY",
+  ) => {
     openTab({
       id: `list-${value}`,
       title: title,
+      subType: subType,
       type: "LIST",
       payload: { filterType: type, filterValue: value },
     });
@@ -44,21 +46,27 @@ export default function Sidebar() {
             icon="📝"
             label="Drafts"
             selectedCategoryId={selectedCategoryId}
-            onClick={() => handleOpenList("Drafts", "STATUS", "DRAFT")}
+            onClick={() =>
+              handleOpenList("Drafts", "STATUS", "DRAFT", "CATEGORY")
+            }
             isCollapsed={isCollapsed}
           />
           <NavItem
             icon="⏳"
             label="In Progress"
             selectedCategoryId={selectedCategoryId}
-            onClick={() => handleOpenList("In Progress", "STATUS", "PROGRESS")}
+            onClick={() =>
+              handleOpenList("In Progress", "STATUS", "PROGRESS", "CATEGORY")
+            }
             isCollapsed={isCollapsed}
           />
           <NavItem
             icon="✅"
             label="Published"
             selectedCategoryId={selectedCategoryId}
-            onClick={() => handleOpenList("Published", "STATUS", "PUBLISHED")}
+            onClick={() =>
+              handleOpenList("Published", "STATUS", "PUBLISHED", "CATEGORY")
+            }
             isCollapsed={isCollapsed}
           />
         </div>
@@ -112,7 +120,10 @@ export default function Sidebar() {
                 icon="🚀"
                 label="Hypersonic"
                 selectedCategoryId={selectedCategoryId}
-                onClick={() => dispatch(fetchArticlesByCategory(category.id))}
+                onClick={async () => {
+                  if (category.id)
+                    await dispatch(fetchArticlesByCategory(category.id));
+                }}
                 isCollapsed={isCollapsed}
               />
             ))}

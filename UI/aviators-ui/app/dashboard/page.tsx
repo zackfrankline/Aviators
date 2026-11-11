@@ -1,5 +1,5 @@
-import Workspace from "@/components/Workspace";
+import Workspace from "@/components/layout/Workspace";
 
-export default function Dashboard(){
-    return <Workspace/>;
+export default function Dashboard() {
+  return <Workspace />;
 }

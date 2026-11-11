@@ -1,6 +1,6 @@
 // app/api/axiosInstance.ts
 import axios from "axios";
-import { AppStore } from "../lib/redux/store";
+import { AppStore } from "@/lib/store";
 
 // Base API pointing to your API Gateway
 const API_BASE_URL =
@@ -24,9 +24,7 @@ export const injectStore = (_store: AppStore) => {
 api.interceptors.request.use(
   (config) => {
     const token = store?.getState()?.auth?.accessToken;
-    console.log(
-      "Axios Interceptor Requests token:" , token
-    )
+    console.log("Axios Interceptor Requests token:", token);
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -97,7 +95,7 @@ api.interceptors.response.use(
         const newAccessToken = data.token;
 
         // Dynamically update Redux state
-        const { setAccessToken } = await import("@/app/lib/redux/authSlice");
+        const { setAccessToken } = await import("@/features/auth");
         store.dispatch(setAccessToken(newAccessToken));
 
         processQueue(null, newAccessToken);
@@ -106,7 +104,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-        const { logoutSuccess } = await import("@/app/lib/redux/authSlice");
+        const { logoutSuccess } = await import("@/features/auth");
         store.dispatch(logoutSuccess());
         throw refreshError;
       } finally {

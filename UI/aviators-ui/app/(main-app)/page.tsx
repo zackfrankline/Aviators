@@ -2,20 +2,19 @@
 "use client";
 
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "@/app/lib/redux/store";
-import { refreshSession } from "@/app/lib/redux/authSlice";
-import { fetchInitialData } from "@/app/lib/redux/contentSlice";
-import ArticleFeed from "@/components/ArticleFeed";
-import TopBar from "@/components/TopBar";
-import Sidebar from "@/components/Sidebar";
-import Workspace from "@/components/Workspace";
+import { ArticleFeed } from "@/features/content";
+import TopBar from "@/components/layout/TopBar";
+import Sidebar from "@/components/layout/Sidebar";
+import Workspace from "@/components/layout/Workspace";
+import { refreshSession } from "@/features/auth";
+import { fetchInitialData } from "@/features/content/store/contentSlice";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 
 export default function Home() {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch(); 
 
-  const { isHydrating } = useSelector((state: RootState) => state.auth);
-  const { status, error } = useSelector((state: RootState) => state.content);
+  const { isHydrating } = useAppSelector((state) => state.auth);
+  const { status, error } = useAppSelector((state) => state.content);
 
   useEffect(() => {
     // 1. Silent refresh check via cookie
@@ -42,7 +41,7 @@ export default function Home() {
 
   return (
     <>
-    {/* Top Navigation */}
+      {/* Top Navigation */}
       <TopBar />
       {/* App Body Grid */}
       <div className="flex flex-1 b overflow-hidden">

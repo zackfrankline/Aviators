@@ -1,4 +1,4 @@
-function TabItem({
+export function TabItem({
   onClick,
   isActive,
   title,
@@ -30,4 +30,3 @@ function TabItem({
   );
 }
 
-export default TabItem;

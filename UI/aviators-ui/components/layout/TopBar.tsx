@@ -6,15 +6,13 @@ import { IoSearchOutline } from "react-icons/io5";
 import { IoIosNotificationsOutline } from "react-icons/io";
 
 import { TfiWrite } from "react-icons/tfi";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/app/lib/redux/store";
-import { logoutUser } from "@/app/lib/redux/authSlice";
 import { ReactNode } from "react";
+import { useAppSelector } from "@/lib/store/hooks";
 
 export default function TopBar() {
   // const dispatch = useDispatch<AppDispatch>();
-  const { user, isAuthenticated, isHydrating } = useSelector(
-    (state: RootState) => state.auth,
+  const { user, isAuthenticated, isHydrating } = useAppSelector(
+    (state) => state.auth,
   );
 
   const { openTab } = useWorkspace();

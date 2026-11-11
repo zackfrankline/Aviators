@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,9 +40,7 @@ public class SecurityConfig {
         http
                 .csrf( csrf -> csrf.disable())
                 .headers(httpSecurityHeadersConfigurer -> {
-                    httpSecurityHeadersConfigurer.frameOptions(frameOptionsConfig -> {
-                        frameOptionsConfig.disable();
-                    });
+                    httpSecurityHeadersConfigurer.frameOptions(FrameOptionsConfig :: disable);
                 })
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "api/auth/logout").hasAuthority(Role.ROLE_ADMIN.toString())
@@ -69,8 +68,7 @@ public class SecurityConfig {
     // DaoAuthenticationProvidor uses the database userDetailsService to find the user.
     @Bean
     public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

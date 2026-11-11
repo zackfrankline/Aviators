@@ -1,7 +1,7 @@
 import { configureStore, Store } from '@reduxjs/toolkit';
-import authReducer from './authSlice';
-import contentReducer from './contentSlice';
-import { injectStore } from '@/app/api/axiosIntance';
+import authReducer from '../../features/auth/store/authSlice';
+import contentReducer from '../../features/content/store/contentSlice';
+import { injectStore } from '@/lib/api/client';
 
 export const store = configureStore({
   reducer: {

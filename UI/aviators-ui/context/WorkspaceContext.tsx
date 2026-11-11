@@ -10,22 +10,44 @@ import React, {
 
 // Define the structure of a Tab based on your wireframe
 export type Tab = {
-  id?: string;
+  id: string;
   title: string;
   type: "CREATE" | "EDIT" | "VIEW" | "LIST";
   subType: "ARTICLE" | "CATEGORY";
   payload?: unknown; // Holds specific article IDs or Category filters
 };
 
+export type NewTab = {
+  id?: string;
+  title: string;
+  type: "CREATE" | "EDIT" | "VIEW" | "LIST";
+  subType: "ARTICLE" | "CATEGORY";
+  payload?: unknown;
+};
+
 export type WorkspaceContextType = {
   tabs: Tab[];
   activeTabId: string | null;
-  openTab: (tab: Tab) => void;
+  openTab: (tab: NewTab) => void;
   closeTab: (id: string, e?: React.MouseEvent) => void;
   setActiveTabId: (id: string) => void;
 };
 
 const WorkspaceContext = createContext<WorkspaceContextType | null>(null);
+
+let tabIdCounter = 0;
+
+function createTabId() {
+  if (typeof crypto !== "undefined") {
+    if (typeof crypto.randomUUID === "function") return crypto.randomUUID();
+
+    const values = crypto.getRandomValues(new Uint32Array(2));
+    return `tab-${Date.now()}-${values[0].toString(36)}-${values[1].toString(36)}`;
+  }
+
+  tabIdCounter += 1;
+  return `tab-${Date.now()}-${tabIdCounter}`;
+}
 
 export function WorkspaceProvider({
   children,
@@ -33,21 +55,19 @@ export function WorkspaceProvider({
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
-  const openTab = useCallback((newTab: Tab) => {
+  const openTab = useCallback((newTab: NewTab) => {
+    let id = newTab.id;
+    if (!id) {
+      id = createTabId();
+    }
+    const tab: Tab = { ...newTab, id };
+
     setTabs((prev) => {
       // If tab already exists, just focus it
-      if (newTab.id === null) {
-        const newId =
-          typeof crypto.randomUUID === "function"
-            ? crypto.randomUUID()
-            : `tab-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        console.log("new Tab Id:", newId);
-        newTab = { ...newTab, id: newId };
-      }
-      if (prev.some((t) => t.id === newTab.id)) return prev;
-      return [...prev, newTab];
+      if (prev.some((t) => t.id === tab.id)) return prev;
+      return [...prev, tab];
     });
-    setActiveTabId(newTab.id ?? null);
+    setActiveTabId(id);
   }, []);
 
   const closeTab = useCallback(

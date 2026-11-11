@@ -7,8 +7,9 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
 import java.util.function.Function;
+
+import javax.crypto.SecretKey;
 
 
 @Service
@@ -36,13 +37,13 @@ public class JwtService {
 
     public Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(getSignInKey())
+                .verifyWith(getSignInKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
-    private Key getSignInKey(){
+    private SecretKey getSignInKey(){
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }

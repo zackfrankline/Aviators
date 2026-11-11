@@ -1,15 +1,13 @@
 // components/ArticleFeed.tsx
 "use client";
 
-import { useSelector } from "react-redux";
-import { RootState } from "@/app/lib/redux/store";
+import { useAppSelector } from "@/lib/store/hooks";
 // import {api} from "@/app/api/axiosIntance"
 
-export default function ArticleFeed() {
-  const { articles, articlesLoading } = useSelector(
-    (state: RootState) => state.content,
+export function ArticleFeed() {
+  const { articles, articlesLoading } = useAppSelector(
+    (state) => state.content,
   );
-
 
   if (articlesLoading) {
     return <div className="p-6 text-slate-400">Filtering articles...</div>;

@@ -1,7 +1,6 @@
 // app/lib/redux/contentSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Article, Category } from "../definitions";
-import { api } from "../../api/axiosIntance";
+import { Article, Category, contentApi } from "@/features/content";
 import { AxiosError } from "axios";
 
 interface ContentState {
@@ -27,14 +26,7 @@ export const fetchInitialData = createAsyncThunk(
   "content/fetchInitialData",
   async (_, { rejectWithValue }) => {
     try {
-      const [articlesRes, categoriesRes] = await Promise.all([
-        api.get<Article[]>("/api/content/articles"),
-        api.get<Category[]>("/api/content/categories"),
-      ]);
-      return {
-        articles: articlesRes.data,
-        categories: categoriesRes.data,
-      };
+      return await contentApi.loadInitialContent();
     } catch (err: unknown) {
       return rejectWithValue((err as AxiosError).response?.data|| "Failed to load feed");
     }
@@ -46,11 +38,7 @@ export const fetchArticlesByCategory = createAsyncThunk(
   "content/fetchArticlesByCategory",
   async (categoryId: string | null, { rejectWithValue }) => {
     try {
-      const url = categoryId
-        ? `/api/content/articles/public?categoryId=${categoryId}`
-        : "/api/content/articles/public";
-      const response = await api.get<Article[]>(url);
-      return { articles: response.data, categoryId };
+      return await contentApi.loadArticleByCategory(categoryId);
     } catch (err: unknown) {
       return rejectWithValue((err as AxiosError).response?.data || "Failed to load category articles");
     }

@@ -2,13 +2,13 @@
 
 import React from "react";
 import { Provider } from "react-redux";
-import { store } from "./store";
+import { store } from "../../lib/store";
 import { WorkspaceProvider } from "@/context/WorkspaceContext";
 
-export default function ClientProviders({
+export default function StoreProvider({
   children,
 }: {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }) {
   return (
     <Provider store={store}>

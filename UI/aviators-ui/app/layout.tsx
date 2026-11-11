@@ -1,5 +1,5 @@
 import "./globals.css";
-import ClientProviders from "./lib/redux/Providers";
+import StoreProvidor from "@/components/providors/StoreProvider";
 
 export const metadata = {
   title: "Aviator Content Workspace",
@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-slate-25 text-slate-950 h-screen overflow-hidden flex flex-col font-sans selection:bg-indigo-500/30">
-        <ClientProviders>{children}</ClientProviders>
+        <StoreProvidor>{children}</StoreProvidor>
       </body>
     </html>
   );

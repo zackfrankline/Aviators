@@ -5,11 +5,10 @@ import {
   useWorkspace,
   WorkspaceContextType,
 } from "@/context/WorkspaceContext";
-import TabItem from "./TabItem";
 import { FaFolderPlus } from "react-icons/fa";
-import { useSelector } from "react-redux";
-import { RootState } from "@/app/lib/redux/store";
-import { Category } from "@/app/lib/definitions";
+import { Category } from "@/features/content";
+import { TabItem } from "../ui";
+import { useAppSelector } from "@/lib/store/hooks";
 
 enum ArticleStatus {
   Open,
@@ -28,11 +27,15 @@ type CreateArticleRequestDTO = {
   youtubeLink: string;
 };
 
+function ArticleEditView() {}
+
+function CategoryEditView() {}
+
 export default function Workspace() {
   const { tabs, activeTabId, openTab, closeTab, setActiveTabId } =
     useWorkspace() as WorkspaceContextType;
 
-  const { categories } = useSelector((state: RootState) => state.content);
+  const { categories } = useAppSelector((state) => state.content);
 
   // Local state for the editor form
   const [editorData, setEditorData] = useState<CreateArticleRequestDTO>({
@@ -64,9 +67,9 @@ export default function Workspace() {
     openTab({
       title: "Create New Category",
       type: "CREATE",
-      subType:'CATEGORY',
-    })
-  }
+      subType: "CATEGORY",
+    });
+  };
 
   if (tabs.length === 0) {
     return (
@@ -220,7 +223,10 @@ export default function Workspace() {
                         </select>
                         {/* Create category Icon */}
                         <div>
-                          <FaFolderPlus onClick={handleCreateCategory} size={36} />
+                          <FaFolderPlus
+                            onClick={handleCreateCategory}
+                            size={36}
+                          />
                         </div>
                       </div>
                     </div>
