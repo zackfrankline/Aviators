@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export const NavItem = ({
   icon,
   label,
@@ -5,7 +7,7 @@ export const NavItem = ({
   isCollapsed,
   selectedCategoryId,
 }: {
-  readonly icon: string;
+  readonly icon: ReactNode;
   readonly label: string;
   readonly onClick: () => void;
   readonly isCollapsed: boolean;
@@ -13,9 +15,9 @@ export const NavItem = ({
 }) => (
   <button
     onClick={onClick}
-    className="w-full flex items-center text-left p-2.5 text-sm text-slate-500 hover:text-slate-700  rounded-lg transition-colors"
+    className="w-full flex items-center text-left py-2.5 px-1.5  p-2.5 text-sm text-secondary-foreground hover:text-foreground rounded-lg transition-colors"
   >
-    <span className="text-lg mr-3">{icon}</span>
-    {!isCollapsed && <span className="font-medium truncate">{label}</span>}
+    <div>{icon}</div>
+    {!isCollapsed && <span className="font-medium truncate ml-2.5 text-md">{label}</span>}
   </button>
 );

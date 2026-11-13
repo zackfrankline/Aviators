@@ -34,6 +34,7 @@ function handleError(err: unknown, fallbackMessage: string) {
   };
 }
 
+
 // 1. Silent Refresh on App Mount (Replaces hardcoded initialAuth)
 export const refreshSession = createAsyncThunk(
   "auth/refreshSession",

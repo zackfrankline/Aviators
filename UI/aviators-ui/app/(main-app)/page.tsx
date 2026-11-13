@@ -46,9 +46,9 @@ export default function Home() {
       {/* App Body Grid */}
       <div className="flex flex-1 b overflow-hidden">
         <Sidebar />
-        <main className="flex-1 bg-slate-50 m-2 rounded-xl border border-slate-800 shadow-2xl overflow-hidden relative flex flex-col">
-          {/* <ArticleFeed /> */}
-          <Workspace />
+        <main className="flex-1 overflow-hidden relative flex flex-col">
+          <ArticleFeed />
+          {/* <Workspace /> */}
         </main>
       </div>
     </>

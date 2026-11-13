@@ -26,8 +26,8 @@ export function InputField<T extends FieldValues>({
   ...rest
 }: InputFieldProps<T>) {
   const inputStyles =
-    "w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500";
-  const errorStyles = "px-1 text-slate-100 text-sm";
+    "w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm text-card-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary";
+  const errorStyles = "px-1 text-card-foreground text-sm";
 
   return (
     // <div className="w-full">

@@ -15,10 +15,10 @@ export type Article = {
   status: "Open" | "Working" | "Published";
   categoryId: string;
   authorId: string;
-  bannerUrl: string;
-  youtubeLink: string;
-  pdfUrl: string;
-  publishedAt: Date;
+  bannerUrl: string | null;
+  youtubeLink: string | null;
+  pdfUrl: string | null;
+  publishedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 };

@@ -24,7 +24,14 @@ export function LoginForm() {
   }, [isAuthenticated, redirectUrl, router]);
 
   const onSubmit = async (loginData: LoginRequestDTO) => {
-    await dispatch(loginUser(loginData));
+    try {
+      console.log('Login Submit')
+      
+      await dispatch(loginUser(loginData));
+      console.log('Login Submit after data');
+    } catch (err) {
+      console.log("Login Error:", err);
+    }
   };
 
   const {

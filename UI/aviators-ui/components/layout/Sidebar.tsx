@@ -2,6 +2,7 @@
 import { ReactNode, useState } from "react";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { NavItem } from "./NavItem";
+import { HiOutlineHome } from "react-icons/hi2";
 import { Category, fetchArticlesByCategory } from "@/features/content";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 
@@ -37,13 +38,13 @@ export default function Sidebar() {
     adminStatusCategory = (
       <div>
         {!isCollapsed && (
-          <h3 className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2 px-2">
+          <h3 className="text-[10px] uppercase tracking-wider text-secondary-foreground font-bold mb-2 px-2">
             Articles
           </h3>
         )}
         <div className="space-y-1">
           <NavItem
-            icon="📝"
+            icon={<HiOutlineHome />}
             label="Drafts"
             selectedCategoryId={selectedCategoryId}
             onClick={() =>
@@ -76,17 +77,17 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`transition-all duration-300 ease-in-out border-r border-slate-800 bg-slate-5 flex flex-col ${isCollapsed ? "w-16" : "w-64"}`}
+      className={`transition-all duration-300 ease-in-out border-r border-border bg-background flex flex-col shadow-popover ${isCollapsed ? "w-16" : "w-64"}`}
     >
-      <div className="p-4 border-b border-slate-800 flex justify-between items-center shrink-0">
+      <div className="p-4 border-b border-border flex justify-between items-center shrink-0">
         {!isCollapsed && (
-          <span className="text-xs font-bold tracking-widest text-slate-500 uppercase">
+          <span className="text-xs font-bold tracking-widest text-secondary-foreground uppercase">
             Navigation
           </span>
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1 hover:bg-slate-800 rounded text-slate-400"
+          className="p-1 hover:bg-secondary rounded text-secondary-foreground"
         >
           {isCollapsed ? "▶" : "◀"}
         </button>
@@ -95,7 +96,7 @@ export default function Sidebar() {
       <nav className="flex-1 overflow-y-auto p-3 space-y-6 scrollbar-hide">
         <div>
           <NavItem
-            icon="🏠"
+            icon={<HiOutlineHome size={24}/>}
             label="Home Dashboard"
             selectedCategoryId={null}
             onClick={() => {}}
@@ -109,7 +110,7 @@ export default function Sidebar() {
         {/* Categories Section */}
         <div>
           {!isCollapsed && (
-            <h3 className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-2 px-2">
+            <h3 className="text-[10px] uppercase tracking-wider text-secondary-foreground font-bold mb-2 px-2">
               Categories
             </h3>
           )}

@@ -8,10 +8,17 @@ services:
       POSTGRES_USER: admin_user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: auth_db
+    volumes:
+      - auth_pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
       - aviator-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin_user -d auth_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   # 2. Auth Service
   jwt-service:
@@ -32,7 +39,8 @@ services:
       - APPLICATION_SECURITY_JWT_SECRET_KEY=bWX+4c/dG5eH6jK8mN0pQ9rS2tU4vW6xY8zA6hC3dE5=
       - APPLICATION_SECURITY_JWT_EXPIRATION=86400000
     depends_on:
-      - jwt-service-db
+      jwt-service-db:
+        condition: service_healthy
     networks:
       - aviator-network
     develop:
@@ -50,10 +58,17 @@ services:
       POSTGRES_USER: admin_user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: content_db
+    volumes:
+      - content_pgdata:/var/lib/postgresql/data
     ports:
       - "5433:5432"
     networks:
       - aviator-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin_user -d content_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   # 4. content service
   content-service:
@@ -73,8 +88,10 @@ services:
       - APPLICATION_SECURITY_JWT_SECRET_KEY=bWX+4c/dG5eH6jK8mN0pQ9rS2tU4vW6xY8zA6hC3dE5=
       - SPRING_DEVTOOLS_RESTART_ENABLED=true
     depends_on:
-      - content-service-db
-      - kafka
+      content-service-db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - aviator-network
     develop:
@@ -96,6 +113,13 @@ services:
       - "5434:5432"
     networks:
       - aviator-network
+    volumes:
+      - subscription_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin_user -d subscription_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   # 4. content service
   subscription-service:
@@ -115,8 +139,10 @@ services:
       - APPLICATION_SECURITY_JWT_SECRET_KEY=bWX+4c/dG5eH6jK8mN0pQ9rS2tU4vW6xY8zA6hC3dE5=
       - SPRING_DEVTOOLS_RESTART_ENABLED=true
     depends_on:
-      - subscription-service-db
-      - kafka
+      subscription-service-db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
     networks:
       - aviator-network
     develop:
@@ -195,6 +221,11 @@ services:
           path: ./UI/aviators-ui/package.json
         - action: rebuild
           path: ./UI/aviators-ui/package-lock.json
+
+volumes:
+  auth_pgdata:
+  content_pgdata:
+  subscription_pgdata:
 
 networks:
   aviator-network:
