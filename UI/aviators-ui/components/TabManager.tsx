@@ -9,7 +9,7 @@ export default function TabManager() {
   // 3. Fallback UI if all tabs are closed
   if (tabs.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center text-gray-500 h-full">
+      <div className="flex-1 flex flex-col items-center justify-center text-secondary-foreground h-full">
         <p>No tabs open. Select an item from the menu.</p>
       </div>
     );
@@ -18,14 +18,14 @@ export default function TabManager() {
   return (
     <div className="h-full flex flex-col">
       {/* Tab Header Row */}
-      <div className="flex bg-gray-900 overflow-x-auto border-b border-gray-700 p-1">
+      <div className="flex bg-background overflow-x-auto border-b border-border p-1">
         {tabs.map((tab: any) => (
           <div 
             key={tab.id}
             // 4. Use the global setActiveTabId function
             onClick={() => setActiveTabId(tab.id)} 
             className={`flex items-center px-4 py-2 mx-1 cursor-pointer rounded-t-md text-sm border-t border-x border-transparent transition-colors
-              ${activeTabId === tab.id ? 'bg-gray-800 border-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800'}`}
+              ${activeTabId === tab.id ? 'bg-card border-border text-card-foreground' : 'text-secondary-foreground hover:bg-secondary'}`}
           >
             <span className="mr-3">{tab.title}</span>
             {/* 5. Use the global closeTab function */}
@@ -42,9 +42,9 @@ export default function TabManager() {
              
              {tab.type === 'CREATE' && (
                <form className="space-y-4">
-                 <input type="text" placeholder="Title" className="w-full p-2 bg-gray-900 border border-gray-700 rounded" />
-                 <textarea placeholder="Summary" className="w-full p-2 bg-gray-900 border border-gray-700 rounded h-24" />
-                 <textarea placeholder="Content" className="w-full p-2 bg-gray-900 border border-gray-700 rounded h-64" />
+                 <input type="text" placeholder="Title" className="w-full p-2 bg-secondary text-card-foreground border border-border rounded" />
+                 <textarea placeholder="Summary" className="w-full p-2 bg-secondary text-card-foreground border border-border rounded h-24" />
+                 <textarea placeholder="Content" className="w-full p-2 bg-secondary text-card-foreground border border-border rounded h-64" />
                </form>
              )}
           </div>

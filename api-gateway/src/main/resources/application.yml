@@ -9,11 +9,14 @@ spring:
       server:
         webflux:
           globalcors:
+            add-to-simple-url-handler-mapping: true
             cors-configurations:
               '[/**]':
-                allowedOrigins: "http://localhost:3000"
+                allowedOrigins: 
+                  - "${ALLOWED_ORIGIN:http://localhost:3000}"
                 allowedHeaders: "*"
                 allowedMethods: "*" # You can safely condense your list to a wildcard
+                allow-credentials: true
           routes:
             # ROUTE 1: CONTENT SERVICE
             - id: content-service
@@ -32,6 +35,5 @@ spring:
               uri: http://subscription-service:4002
               predicates:
                 - Path=/api/subscriptions/** # Double-check this! Earlier you used /api/subscriptions/ (with an 's')
-
 
 

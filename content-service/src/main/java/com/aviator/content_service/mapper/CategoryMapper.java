@@ -1,5 +1,8 @@
 package com.aviator.content_service.mapper;
 
+import java.util.UUID;
+
+
 import com.aviator.content_service.dto.CategoryRequestDTO;
 import com.aviator.content_service.dto.CategoryResponseDTO;
 import com.aviator.content_service.model.Category;
@@ -25,6 +28,7 @@ public class CategoryMapper {
                 .name(categoryRequestDTO.getName())
                 .slug(slug)
                 .description(categoryRequestDTO.getDescription())
+                .createdBy(UUID.fromString(categoryRequestDTO.getCreatedBy()))
                 .build();
     }
 

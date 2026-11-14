@@ -22,12 +22,19 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
     private final SecurityUtility securityUtility;
+
+
     /**
+     * Fetches List of Categories subscribed by the current User
+     * 
      * @param userId
      * @return CategoryIdResponseDTO
      */
     @Override
     public List<CategoryIdResponseDTO> getAllSubsribedCategoriesForUser(String userId) {
+        if(!securityUtility.getCurrentUserId().toString().equals(userId)){
+            throw new IllegalArgumentException("Only a User can view their Subscriptions");
+        }
         List<Subscription> subscriptions = subscriptionRepository.findBySubscriptionId_UserId(UUID.fromString(userId));
         return subscriptions.stream()
                 .map(SubscriptionMapper::toCategoryIdResponseDTO)

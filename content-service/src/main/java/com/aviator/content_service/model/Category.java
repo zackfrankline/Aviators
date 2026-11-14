@@ -28,6 +28,8 @@ public class Category {
 
     public String description;
 
+    public UUID createdBy;
+
     @Column(name = "created_at")
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-ddTHH:mm:ss")

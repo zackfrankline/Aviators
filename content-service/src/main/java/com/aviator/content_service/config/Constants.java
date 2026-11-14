@@ -5,5 +5,5 @@ public class Constants {
         // this constants class cannot be instantiated
     }
 
-    public static final String ERROR_HEADER = "Error:";
+    public static final String ERROR_HEADER = "Error";
 }

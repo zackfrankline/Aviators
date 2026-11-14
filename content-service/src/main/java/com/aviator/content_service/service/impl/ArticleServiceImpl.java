@@ -33,6 +33,11 @@ public class ArticleServiceImpl implements ArticleService {
         this.securityUtility = securityUtility;
     }
 
+    /**    (non-Javadoc)
+     * Returns List of Article Response DTO of Published Article for Audience and All for Admin.
+     * 
+     * @return List<ArticleRequestDTO>
+     */
     @Override
     public List<ArticleResponseDTO> getAllArticles() {
 
@@ -47,7 +52,12 @@ public class ArticleServiceImpl implements ArticleService {
                 .map(ArticleMapper::toDTO).toList();
     }
 
-
+    /**    (non-Javadoc)
+     * Creates Article using articleId by the current logged in Admin User.
+     * 
+     * @param ArticleRequestDTO
+     * @return ArticleRequestDTO
+     */
     @Override
     @Transactional
     public ArticleResponseDTO createArticle(ArticleRequestDTO articleRequestDTO) {
@@ -79,8 +89,10 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
-     * @param articleRequestDTO
-     * @return
+     * Updates Article using articleId by the current logged in User.
+     * 
+     * @param ArticleRequestDTO
+     * @return ArticleRequestDTO
      */
     @Override
     @Transactional
@@ -98,6 +110,11 @@ public class ArticleServiceImpl implements ArticleService {
             articleRequestDTO.setSlug(formattedSlug);
         }
 
+        UUID loggedInUserId = securityUtility.getCurrentUserId();
+        if(loggedInUserId != article.getAuthorId()){
+            throw new IllegalArgumentException("Only Article Author can update Article.");
+        }
+
         ArticleMapper.updateDtoToModel(articleRequestDTO, article);
 
         try{
@@ -109,6 +126,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
+     * Deletes Article using articleId by the current logged in User.
+     * 
      * @param articleRequestDTO
      */
     @Override
@@ -118,6 +137,10 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = articleRepository.findById(articleId).orElseThrow(
                 () -> new ResourceNotFoundException("No Article Found")
         );
+        UUID loggedInUserId = securityUtility.getCurrentUserId();
+        if(loggedInUserId != article.getAuthorId()){
+            throw new IllegalArgumentException("Only Article Author can delete Article.");
+        }
         try{
             articleRepository.delete(article);
         } catch (Exception e) {

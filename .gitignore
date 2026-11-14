@@ -3,3 +3,4 @@ docker-compose.yml
 .idea/
 .env
 .vscode/
+qa-key.pem

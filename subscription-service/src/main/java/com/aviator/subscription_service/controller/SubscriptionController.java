@@ -20,6 +20,12 @@ public class SubscriptionController {
     private final CategoryMirrorService categoryMirrorService;
 
     //get subscribed categories
+    /**
+     * Returns List of Subscribed Categories (Allowed only for Logged In User).
+     * 
+     * @param userId: String @PathVariable
+     * @return List<CategoryIdResponseDTO>
+     */
     @GetMapping("/{userId}")
     public ResponseEntity<List<CategoryIdResponseDTO>> getAllSubscribedCategories(@PathVariable String userId){
         List<CategoryIdResponseDTO> categoryIdResponseDTOS = subscriptionService.getAllSubsribedCategoriesForUser(userId);
