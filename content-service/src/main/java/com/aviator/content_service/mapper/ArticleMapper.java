@@ -5,16 +5,54 @@ import com.aviator.content_service.dto.ArticleRequestDTO;
 import com.aviator.content_service.dto.ArticleResponseDTO;
 import com.aviator.content_service.model.Article;
 
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
 public class ArticleMapper {
 
+    // Thread-safe static ObjectMapper with Java 8 Date/Time modules auto-registered
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
+            .findAndAddModules()
+            .build();
+
+    // Reusable TypeReference avoids recreating anonymous inner class on every call
+    private static final TypeReference<Map<String, Object>> MAP_TYPE_REF = new TypeReference<>() {};
+
+
     private ArticleMapper(){
         //  THIS MAPPER CANNOT BE INSTANTIATED
     }
+
+    private static String serializeContent(Map<String, Object> content) {
+        if (content == null) {
+            return null;
+        }
+        try {
+            return OBJECT_MAPPER.writeValueAsString(content);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to serialize article content to JSON string", e);
+        }
+    }
+
+    private static Map<String, Object> deserializeContent(String contentJson) {
+        if (contentJson == null || contentJson.isBlank()) {
+            return new HashMap<>();
+        }
+        try {
+            return OBJECT_MAPPER.readValue(contentJson, MAP_TYPE_REF);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JSON format in article content", e);
+        }
+    }
+
 
     public static ArticleResponseDTO toDTO(Article article){
         return ArticleResponseDTO.builder()
@@ -22,7 +60,7 @@ public class ArticleMapper {
                 .title(article.getTitle())
                 .slug(article.getSlug())
                 .summary(article.getSummary())
-                .content(article.getContent())
+                .content(serializeContent(article.getContent()))
                 .status(article.getStatus())
                 .categoryId(article.getCategoryId())
                 .authorId(article.getAuthorId())
@@ -49,7 +87,7 @@ public class ArticleMapper {
         return Article.builder()
                 .title(articleRequestDTO.getTitle())
                 .summary(articleRequestDTO.getSummary())
-                .content(articleRequestDTO.getContent())
+                .content(deserializeContent(articleRequestDTO.getContent()))
                 .status(articleRequestDTO.getStatus())
                 .slug(slug)
                 .authorId(authorId)
@@ -69,7 +107,7 @@ public class ArticleMapper {
 
         article.setTitle(articleRequestDTO.getTitle());
         article.setSummary(articleRequestDTO.getSummary());
-        article.setContent(articleRequestDTO.getContent());
+        article.setContent(deserializeContent(articleRequestDTO.getContent()));
         article.setSlug(articleRequestDTO.getSlug());
         article.setStatus(articleRequestDTO.getStatus());
         article.setCategoryId(categoryId);
