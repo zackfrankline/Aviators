@@ -8,7 +8,7 @@ export type User = {
 };
 
 export interface LoginRequestDTO {
-  username: string;
+  userName: string;
   password: string;
 }
 

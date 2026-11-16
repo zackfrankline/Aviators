@@ -9,10 +9,13 @@ import { TfiWrite } from "react-icons/tfi";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { useAppSelector } from "@/lib/store/hooks";
 import { ProfileCard } from "@/features/profile";
+import { useRouter } from "next/navigation";
 
 export default function TopBar() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const router = useRouter();
 
   // Close the card when clicking anywhere outside
   useEffect(() => {
@@ -30,15 +33,16 @@ export default function TopBar() {
     (state) => state.auth,
   );
 
-  const { openTab } = useWorkspace();
+  // const { openTab } = useWorkspace();
   // console.log("User", user, "isAuthenticated:", isAuthenticated);
 
   const handleCreateNew = () => {
-    openTab({
-      subType: "ARTICLE",
-      title: "New Article",
-      type: "CREATE",
-    });
+    // openTab({
+    //   subType: "ARTICLE",
+    //   title: "New Article",
+    //   type: "CREATE",
+    // });
+    router.push('/new-article')
   };
 
   //profileUI for Role Based UI

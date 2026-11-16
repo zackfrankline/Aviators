@@ -25,7 +25,7 @@ export function LoginForm() {
 
   const onSubmit = async (loginData: LoginRequestDTO) => {
     try {
-      console.log('Login Submit')
+      console.log('Login Submit', loginData);
       
       await dispatch(loginUser(loginData));
       console.log('Login Submit after data');
@@ -41,7 +41,7 @@ export function LoginForm() {
   } = useForm<LoginRequestDTO>({
     mode: "onChange",
     defaultValues: {
-      username: "",
+      userName: "",
       password: "",
     },
   });
@@ -56,11 +56,11 @@ export function LoginForm() {
           Access subscriber-only content and workspace
         </p>
 
-        {error && (
+        {/* {error && (
           <div className="mb-4 p-3 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs rounded-lg">
             {error}
           </div>
-        )}
+        )} */}
 
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -68,11 +68,11 @@ export function LoginForm() {
         >
           <div>
             <InputField
-              name="username"
+              name="userName"
               placeholder="Username..."
               register={register}
-              aria-label="username"
-              error={errors.username}
+              aria-label="userName"
+              error={errors.userName}
               rules={{
                 required: "Username is Required",
                 pattern: {
