@@ -25,12 +25,12 @@ export function LoginForm() {
 
   const onSubmit = async (loginData: LoginRequestDTO) => {
     try {
-      console.log('Login Submit', loginData);
+      // console.log('Login Submit', loginData);
       
       await dispatch(loginUser(loginData));
-      console.log('Login Submit after data');
+      // console.log('Login Submit after data');
     } catch (err) {
-      console.log("Login Error:", err);
+      // console.log("Login Error:", err);
     }
   };
 

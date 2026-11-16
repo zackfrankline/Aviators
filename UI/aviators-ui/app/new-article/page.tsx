@@ -8,7 +8,7 @@ export default function NewArticle() {
   const [articleContent, setArticleContent] = useState<JSONContent | null>(
     null,
   );
-  console.log(JSON.stringify(articleContent, null, 2));
+  // console.log(JSON.stringify(articleContent, null, 2));
   return (
     <>
       <SimpleEditor onContentChange={setArticleContent} />
