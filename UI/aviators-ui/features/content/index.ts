@@ -8,7 +8,7 @@ export { ArticleFeed } from "./components/ArticleFeed";
 export {contentApi} from "./api/contentApi"
 
 //rich text editor
-export { default as SimpleEditor } from "./components/editor/lazySimpleEditor";
+export {default as SimpleEditor} from "./components/editor/LazySimpleEditor"
 
 // content async thunk (Requests)
 export {fetchInitialData, fetchArticlesByCategory} from "./store/contentSlice"
